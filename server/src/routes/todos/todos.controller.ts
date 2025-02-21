@@ -20,7 +20,9 @@ export const getAllTodos = async (req: Request, res: Response) => {
 export const createTodo = async (req: Request, res: Response) => {
   try {
     const { title, description } = req.body;
+    const id = (await Todo.countDocuments()) + 1;
     const todo = new Todo({
+      id,
       title,
       description,
     });
@@ -36,9 +38,14 @@ export const createTodo = async (req: Request, res: Response) => {
 export const updateTodo = asyncHandler(
   async (req: Request<{ id: string }>, res: Response) => {
     const { id } = req.params;
-    const updatedTodo = await Todo.findByIdAndUpdate(id, req.body, {
-      new: true,
-    });
+    const updatedTodo = await Todo.findOneAndUpdate(
+      { id: Number(id) },
+      req.body,
+      {
+        new: true,
+        returnDocument: 'after',
+      }
+    );
 
     if (!updatedTodo) {
       return res.status(404).json({ message: 'Todo not found' });
@@ -51,7 +58,7 @@ export const updateTodo = asyncHandler(
 export const deleteTodo = asyncHandler(
   async (req: Request<{ id: string }>, res: Response) => {
     const { id } = req.params;
-    const deletedTodo = await Todo.findByIdAndDelete(id);
+    const deletedTodo = await Todo.findOneAndDelete({ id: Number(id) });
 
     if (!deletedTodo) {
       return res.status(404).json({ message: 'Todo not found' });
