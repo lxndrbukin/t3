@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import Todo from './todos.model';
+import Todo from '../../models/todos.model';
 
 const asyncHandler =
   (fn: any) => (req: Request, res: Response, next: NextFunction) => {
