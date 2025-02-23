@@ -2,12 +2,18 @@ import express, { Request, Response } from 'express';
 import http from 'http';
 
 import connectToMongoDB from './db';
+import api from './routes/api';
 
 const app = express();
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello World!');
 });
+
+app.use('/v1', api);
 
 connectToMongoDB();
 
