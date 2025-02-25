@@ -1,6 +1,8 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 
+import User from '../models/user.model';
+
 const passportConfig = (config: { [key: string]: string }): void => {
   passport.use(
     new GoogleStrategy(
@@ -10,14 +12,16 @@ const passportConfig = (config: { [key: string]: string }): void => {
         callbackURL: config.callbackURL,
       },
       (accessToken, refreshToken, profile, done) => {
-        console.log(profile);
-        return done(null, profile);
+        done(null, profile);
       }
     )
   );
 
-  passport.serializeUser((user: any, done) => done(null, user.id as string));
-  passport.deserializeUser((id, done) => done(null, id as string));
+  passport.serializeUser((user: any, done) => done(null, user as string));
+  passport.deserializeUser(async (user: any, done) => {
+    const userData = await User.findOne({ googleId: user.id });
+    return done(null, userData);
+  });
 };
 
 export default passportConfig;

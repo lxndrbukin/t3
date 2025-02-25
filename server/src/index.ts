@@ -2,7 +2,9 @@ import express, { Request, Response } from 'express';
 import http from 'http';
 import session from 'express-session';
 import passport from 'passport';
+import mongoose from 'mongoose';
 
+import User from './models/user.model';
 import passportConfig from './services/passport';
 import connectToMongoDB from './db';
 import api from './routes/api';
@@ -37,9 +39,10 @@ passportConfig(config);
 
 app.get('/', (req: Request, res: Response): void => {
   if (!req.session.passport) {
-    res.status(401).send('You are not logged in, babe! 😘');
+    res.status(401).send('You are not logged in!');
   } else {
-    res.send(`Welcome back, ${req.session.passport.user}!`);
+    console.log(req.user);
+    res.send(`Welcome back!`);
   }
 });
 
