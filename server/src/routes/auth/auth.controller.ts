@@ -7,7 +7,7 @@ export const login = (req: Request, res: Response) => {
 };
 
 export const signup = async (req: Request, res: Response) => {
-  const { name, email } = req.body;
+  const { displayName, email } = req.session as any;
   const id = (await User.countDocuments()) + 1;
   const user = new User({ id, name, email });
   await user.save();
