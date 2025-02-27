@@ -65,10 +65,7 @@ app.get(
 );
 
 app.get('/logout', (req, res) => {
-  req.session?.destroy((err) => {
-    if (err) {
-      console.log('Logout error:', err);
-    }
+  req.logout(() => {
     res.redirect('/');
   });
 });
