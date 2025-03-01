@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import Todo from '../../models/todos.model';
+import TodoList from '../../models/todos.model';
 
 const asyncHandler =
   (fn: any) => (req: Request, res: Response, next: NextFunction) => {
@@ -8,8 +8,10 @@ const asyncHandler =
 
 export const getAllTodos = async (req: Request, res: Response) => {
   try {
-    const todos = await Todo.find();
-    res.send(todos);
+    const todosList = await TodoList.findOne({
+      userId: (req.session as any).passport.user,
+    });
+    res.send(todosList);
   } catch (error) {
     res.status(500).json({
       message: error instanceof Error ? error.message : 'Unknown error',
@@ -17,17 +19,39 @@ export const getAllTodos = async (req: Request, res: Response) => {
   }
 };
 
+export const createTodoForm = (req: Request, res: Response) => {
+  res.send(`
+    <form method="POST" action="/v1/todos">
+      <input type="text" name="title" placeholder="Title" />
+      <input type="text" name="description" placeholder="Description" />
+      <button type="submit">Create Todo</button>
+    </form>
+  `);
+};
+
 export const createTodo = async (req: Request, res: Response) => {
   try {
-    const { title, description } = req.body;
-    const id = (await Todo.countDocuments()) + 1;
-    const todo = new Todo({
-      id,
-      title,
-      description,
+    let todosList = await TodoList.findOne({
+      userId: (req.session as any).passport.user as string,
     });
-    await todo.save();
-    res.status(201).json(todo);
+    if (!todosList) {
+      todosList = await TodoList.create({
+        userId: (req.session as any).passport.user as string,
+        todos: [
+          {
+            id: 1,
+            title: req.body.title,
+            description: req.body.description,
+          },
+        ],
+      });
+    } else {
+      todosList = await TodoList.findOneAndUpdate(
+        { userId: (req.session as any).passport.user },
+        { $push: { todos: { id: todosList.todos.length + 1, ...req.body } } }
+      );
+    }
+    res.status(201).json(todosList);
   } catch (error) {
     res.status(500).json({
       message: error instanceof Error ? error.message : 'Unknown error',
@@ -38,7 +62,7 @@ export const createTodo = async (req: Request, res: Response) => {
 export const updateTodo = asyncHandler(
   async (req: Request<{ id: string }>, res: Response) => {
     const { id } = req.params;
-    const updatedTodo = await Todo.findOneAndUpdate(
+    const updatedTodo = await TodoList.findOneAndUpdate(
       { id: Number(id) },
       req.body,
       {
@@ -58,7 +82,7 @@ export const updateTodo = asyncHandler(
 export const deleteTodo = asyncHandler(
   async (req: Request<{ id: string }>, res: Response) => {
     const { id } = req.params;
-    const deletedTodo = await Todo.findOneAndDelete({ id: Number(id) });
+    const deletedTodo = await TodoList.findOneAndDelete({ id: Number(id) });
 
     if (!deletedTodo) {
       return res.status(404).json({ message: 'Todo not found' });

@@ -47,13 +47,14 @@ app.get('/', (req: Request, res: Response): void => {
   if (!req.isAuthenticated()) {
     res.status(401).send('You are not logged in!');
   } else {
+    console.log(req.session);
     res.send(`Welcome back!`);
   }
 });
 
 app.get(
   '/auth/google',
-  passport.authenticate('google', { scope: ['profile', 'email'] })
+  passport.authenticate('google', { scope: ['openid', 'profile', 'email'] })
 );
 
 app.get(

@@ -1,36 +1,48 @@
 import mongoose from 'mongoose';
 
 const todoSchema = new mongoose.Schema({
-  id: {
-    type: Number,
-    required: true,
-    unique: true,
-  },
-  title: {
+  userId: {
     type: String,
     required: true,
   },
-  description: {
-    type: String,
-    required: true,
-  },
-  completed: {
-    type: Boolean,
-    default: false,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
+  todos: [
+    {
+      id: {
+        type: Number,
+        required: true,
+        unique: true,
+      },
+      title: {
+        type: String,
+        required: true,
+      },
+      description: {
+        type: String,
+        required: true,
+      },
+      completed: {
+        type: Boolean,
+        default: false,
+      },
+      createdAt: {
+        type: Date,
+        default: Date.now,
+      },
+    },
+  ],
 });
 
-const Todo = mongoose.model('Todo', todoSchema);
+const TodoList = mongoose.model('TodoList', todoSchema);
 
-export default Todo;
+export default TodoList;
 
-export type Todo = mongoose.Document & {
-  title: string;
-  description: string;
-  completed: boolean;
-  createdAt: Date;
+export type TodoListType = mongoose.Document & {
+  userId: string;
+  todos: {
+    id: number;
+    title: string;
+    description: string;
+    completed: boolean;
+    createdAt: Date;
+  }[];
 };
