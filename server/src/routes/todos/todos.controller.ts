@@ -6,12 +6,19 @@ const asyncHandler =
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 
-export const getAllTodos = async (req: Request, res: Response) => {
+export const getAllTodos = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const todosList = await TodoList.findOne({
       userId: (req.session as any).passport.user,
-    });
-    res.send(todosList);
+    }).select('-__v -_id -userId');
+    if (!todosList) {
+      res.status(404).json({ message: 'Todo list not found' });
+    } else {
+      res.json(todosList.todos);
+    }
   } catch (error) {
     res.status(500).json({
       message: error instanceof Error ? error.message : 'Unknown error',
@@ -25,6 +32,16 @@ export const createTodoForm = (req: Request, res: Response) => {
       <input type="text" name="title" placeholder="Title" />
       <input type="text" name="description" placeholder="Description" />
       <button type="submit">Create Todo</button>
+    </form>
+  `);
+};
+
+export const updateTodoForm = (req: Request, res: Response) => {
+  res.send(`
+    <form method="PUT" action="/v1/todos/${req.params.id}">
+      <input type="text" name="title" placeholder="Title" />
+      <input type="text" name="description" placeholder="Description" />
+      <button type="submit">Update Todo</button>
     </form>
   `);
 };
@@ -61,32 +78,60 @@ export const createTodo = async (req: Request, res: Response) => {
 
 export const updateTodo = asyncHandler(
   async (req: Request<{ id: string }>, res: Response) => {
-    const { id } = req.params;
-    const updatedTodo = await TodoList.findOneAndUpdate(
-      { id: Number(id) },
-      req.body,
-      {
-        new: true,
-        returnDocument: 'after',
+    try {
+      const userId = (req.session as any).passport?.user as string;
+      if (!userId) {
+        return res.status(401).json({ message: 'Unauthorized, please log in' });
       }
-    );
 
-    if (!updatedTodo) {
-      return res.status(404).json({ message: 'Todo not found' });
+      let todosList = await TodoList.findOne({ userId });
+
+      if (!todosList) {
+        return res.status(404).json({ message: 'Todo list not found' });
+      }
+
+      let todo = todosList.todos.find(
+        (todo) => String(todo.id) === req.params.id
+      );
+
+      if (!todo) {
+        return res.status(404).json({ message: 'Todo not found' });
+      }
+      Object.assign(todo, req.body);
+
+      await todosList.save();
+
+      res.json({ message: 'Todo updated successfully', todo });
+    } catch (error) {
+      res.status(500).json({
+        message: error instanceof Error ? error.message : 'Unknown error',
+      });
     }
-
-    res.json(updatedTodo);
   }
 );
 
 export const deleteTodo = asyncHandler(
   async (req: Request<{ id: string }>, res: Response) => {
-    const { id } = req.params;
-    const deletedTodo = await TodoList.findOneAndDelete({ id: Number(id) });
-
-    if (!deletedTodo) {
-      return res.status(404).json({ message: 'Todo not found' });
+    const userId = (req.session as any).passport?.user as string;
+    if (!userId) {
+      return res.status(401).json({ message: 'Unauthorized, please log in' });
     }
+
+    const todosList = await TodoList.findOne({ userId });
+    if (!todosList) {
+      return res.status(404).json({ message: 'Todo list not found' });
+    }
+
+    const todoIndex = todosList.todos.findIndex(
+      (todo) => String(todo.id) === req.params.id
+    );
+    if (todoIndex === -1) {
+      return res.status(404).json({ message: 'Todo not found' });
+    } else {
+      todosList.todos.splice(todoIndex, 1);
+    }
+
+    await todosList.save();
 
     res.json({ message: 'Todo deleted successfully' });
   }

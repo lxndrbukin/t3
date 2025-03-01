@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import {
   getAllTodos,
   createTodo,
@@ -9,10 +9,22 @@ import {
 
 const router: Router = Router();
 
-router.get('/', getAllTodos);
+const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
+  const { userId } = req.params;
+  if (
+    (req.session as any).passport &&
+    (req.session as any).passport.user === userId
+  ) {
+    return next();
+  } else {
+    return res.redirect('/');
+  }
+};
+
+router.get('/:userId', isAuthenticated, getAllTodos);
 router.get('/create', createTodoForm);
-router.post('/', createTodo);
-router.put('/:id', updateTodo);
-router.delete('/:id', deleteTodo);
+router.post('/:userId', createTodo);
+router.put('/:userId/:id', updateTodo);
+router.delete('/:userId/:id', deleteTodo);
 
 export default router;
