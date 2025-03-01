@@ -1,16 +1,73 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import http from 'http';
+import cookieSession from 'cookie-session';
+import passport from 'passport';
 
+import passportConfig from './services/passport';
 import connectToMongoDB from './db';
 import api from './routes/api';
+
+const config = {
+  clientID: process.env.GOOGLE_CLIENT_ID as string,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+  callbackURL: '/auth/google/callback',
+  sessionSecret: process.env.SESSION_SECRET as string,
+};
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hello World!');
+app.use(
+  cookieSession({
+    name: 'session',
+    keys: [config.sessionSecret],
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+  })
+);
+
+app.use(passport.initialize());
+app.use((req, res, next) => {
+  if (!req.session) {
+    req.session = {} as any;
+  }
+  (req.session as any).regenerate = (cb: (err?: Error) => void) => cb();
+  (req.session as any).save = (cb: (err?: Error) => void) => cb();
+
+  next();
+});
+app.use(passport.session());
+
+passportConfig(config);
+
+app.get('/', (req: Request, res: Response): void => {
+  if (!req.isAuthenticated()) {
+    res.status(401).send('You are not logged in!');
+  } else {
+    res.send(`Welcome back!`);
+  }
+});
+
+app.get(
+  '/auth/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+
+app.get(
+  '/auth/google/callback',
+  passport.authenticate('google', { failureRedirect: '/' }),
+  (req, res) => {
+    res.redirect('/');
+  }
+);
+
+app.get('/logout', (req, res) => {
+  req.logout(() => {
+    res.redirect('/');
+  });
 });
 
 app.use('/v1', api);
