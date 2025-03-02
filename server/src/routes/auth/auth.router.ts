@@ -1,30 +1,19 @@
-import { Router } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import passport from 'passport';
 
-import { login, signup, logout } from './auth.controller';
+import { login, logout } from './auth.controller';
 
 const router: Router = Router();
 
 router.get(
-  '/',
+  '/google',
   passport.authenticate('google', { scope: ['email', 'profile'] })
 );
 
 router.get(
-  '/callback',
+  '/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
   login
-);
-
-router.get(
-  '/signup',
-  passport.authenticate('google', { scope: ['email', 'profile'] })
-);
-
-router.get(
-  '/signup/callback',
-  passport.authenticate('google', { failureRedirect: '/' }),
-  signup
 );
 
 router.get('/logout', logout);
