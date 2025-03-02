@@ -17,14 +17,14 @@ const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
   ) {
     return next();
   } else {
-    return res.redirect('/');
+    res.status(401).json({ message: 'Access unauthorized' });
   }
 };
 
 router.get('/:userId', isAuthenticated, getAllTodos);
-router.get('/create', createTodoForm);
-router.post('/:userId', createTodo);
-router.put('/:userId/:id', updateTodo);
-router.delete('/:userId/:id', deleteTodo);
+router.get('/:userId/create-form', isAuthenticated, createTodoForm);
+router.post('/:userId/create', isAuthenticated, createTodo);
+router.put('/:userId/:id', isAuthenticated, updateTodo);
+router.delete('/:userId/:id', isAuthenticated, deleteTodo);
 
 export default router;

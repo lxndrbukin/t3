@@ -28,20 +28,10 @@ export const getAllTodos = async (
 
 export const createTodoForm = (req: Request, res: Response) => {
   res.send(`
-    <form method="POST" action="/v1/todos">
+    <form method="POST" action="/v1/todos/${req.params.userId}/create">
       <input type="text" name="title" placeholder="Title" />
       <input type="text" name="description" placeholder="Description" />
       <button type="submit">Create Todo</button>
-    </form>
-  `);
-};
-
-export const updateTodoForm = (req: Request, res: Response) => {
-  res.send(`
-    <form method="PUT" action="/v1/todos/${req.params.id}">
-      <input type="text" name="title" placeholder="Title" />
-      <input type="text" name="description" placeholder="Description" />
-      <button type="submit">Update Todo</button>
     </form>
   `);
 };
