@@ -10,7 +10,7 @@ import api from './routes/api';
 const config = {
   clientID: process.env.GOOGLE_CLIENT_ID as string,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-  callbackURL: '/auth/google/callback',
+  callbackURL: '/v1/auth/google/callback',
   sessionSecret: process.env.SESSION_SECRET as string,
 };
 
@@ -49,25 +49,6 @@ app.get('/', (req: Request, res: Response): void => {
   } else {
     res.send(`Welcome back!`);
   }
-});
-
-app.get(
-  '/auth/google',
-  passport.authenticate('google', { scope: ['profile', 'email'] })
-);
-
-app.get(
-  '/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/' }),
-  (req, res) => {
-    res.redirect('/');
-  }
-);
-
-app.get('/logout', (req, res) => {
-  req.logout(() => {
-    res.redirect('/');
-  });
 });
 
 app.use('/v1', api);

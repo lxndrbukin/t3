@@ -34,13 +34,15 @@ export default function passportConfig(config: {
     )
   );
 
-  passport.serializeUser((user: any, done) => {
-    done(null, user.id);
+  passport.serializeUser((userData: any, done) => {
+    done(null, userData.googleId);
   });
 
-  passport.deserializeUser(async (id, done) => {
+  passport.deserializeUser(async (googleId: string, done) => {
     try {
-      const user = await User.findById(id).select('-password');
+      const user = await User.findOne({ googleId: googleId }).select(
+        '-password'
+      );
       done(null, user);
     } catch (err) {
       done(err, null);
