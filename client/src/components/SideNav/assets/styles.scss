@@ -1,0 +1,12 @@
+.nav {
+  display: flex;
+  flex-direction: column;
+  width: 20%;
+  border-right: 1px solid #000;
+  height: 100%;
+
+  .nav-logo {
+    font-weight: bold;
+    font-size: 24px;
+  }
+}
