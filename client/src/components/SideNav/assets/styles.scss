@@ -1,12 +1,108 @@
+@import '../../../assets/variables.scss';
+
 .nav {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   width: 20%;
-  border-right: 1px solid #000;
+  min-width: 200px;
+  border-right: 2px solid $color-light-grey;
   height: 100%;
 
   .nav-logo {
     font-weight: bold;
     font-size: 24px;
+    padding: 8px;
+    color: $color-dark-purple;
+  }
+
+  .nav-menu-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+
+    .nav-menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      padding: 4px;
+      width: 100%;
+      box-sizing: border-box;
+      align-self: flex-start;
+
+      li {
+        padding: 8px;
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        box-sizing: border-box;
+
+        &:hover {
+          background-color: $color-light-grey;
+          border-radius: 4px;
+          font-weight: bold;
+        }
+
+        a {
+          text-decoration: none;
+          color: $color-black;
+          display: grid;
+          grid-template-columns: 24px 1fr;
+          gap: 8px;
+          align-items: center;
+          width: 100%;
+
+          .nav-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+            background-color: $color-light-grey;
+            border-radius: 50%;
+          }
+        }
+      }
+    }
+
+    .nav-submenu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      padding: 4px;
+      width: 100%;
+      box-sizing: border-box;
+
+      li {
+        padding: 8px;
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        box-sizing: border-box;
+
+        &:hover {
+          background-color: $color-light-grey;
+          border-radius: 4px;
+          font-weight: bold;
+        }
+
+        a {
+          text-decoration: none;
+          color: $color-black;
+          display: grid;
+          grid-template-columns: 24px 1fr;
+          gap: 8px;
+          align-items: center;
+          width: 100%;
+
+          .nav-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+            background-color: $color-light-grey;
+            border-radius: 50%;
+          }
+        }
+      }
+    }
   }
 }
