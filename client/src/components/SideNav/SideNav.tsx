@@ -1,4 +1,5 @@
 import './assets/styles.scss';
+import { Link } from 'react-router-dom';
 
 import { NavLink } from './types';
 
@@ -9,10 +10,10 @@ export default function SideNav() {
     return links.map(({ name, href, icon }: NavLink) => {
       return (
         <li key={name}>
-          <a href={href}>
+          <Link to={href}>
             <div className='nav-icon'></div>
             <span>{name}</span>
-          </a>
+          </Link>
         </li>
       );
     });

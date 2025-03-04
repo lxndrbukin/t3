@@ -10,8 +10,9 @@ body {
   #root {
     height: 100vh;
 
-    .container {
+    .app {
       height: 100%;
+      display: flex;
     }
   }
 }
