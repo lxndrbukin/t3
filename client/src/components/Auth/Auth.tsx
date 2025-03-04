@@ -21,7 +21,7 @@ export default function Auth() {
         <a href='/auth/forgot-password'>Forgot password?</a>
       </p>
 
-      <a className='google' href='/auth/google'>
+      <a className='google' href='/v1/auth/google'>
         <span>Login with Google</span>
       </a>
     </div>
