@@ -1,5 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import http from 'http';
+import cors from 'cors';
 import cookieSession from 'cookie-session';
 import passport from 'passport';
 
@@ -16,6 +17,12 @@ const config = {
 
 const app = express();
 
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
