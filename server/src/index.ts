@@ -52,11 +52,12 @@ app.use(passport.session());
 
 passportConfig(config);
 
+app.use('/v1', api);
+
 app.get('*', (req: Request, res: Response) => {
+  console.log('Hi');
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
-
-app.use('/v1', api);
 
 connectToMongoDB();
 
