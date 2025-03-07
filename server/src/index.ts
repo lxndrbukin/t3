@@ -3,6 +3,7 @@ import http from 'http';
 import cors from 'cors';
 import cookieSession from 'cookie-session';
 import passport from 'passport';
+import path from 'path';
 
 import passportConfig from './services/passport';
 import connectToMongoDB from './db';
@@ -50,13 +51,8 @@ app.use(passport.session());
 
 passportConfig(config);
 
-app.get('/', (req: Request, res: Response): void => {
-  if (!req.isAuthenticated()) {
-    res.status(401).send('You are not logged in!');
-  } else {
-    console.log(req.session);
-    res.send(`Welcome back!`);
-  }
+app.get('*', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 app.use('/v1', api);
