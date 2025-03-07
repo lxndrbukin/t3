@@ -41,7 +41,7 @@ export default function passportConfig(config: {
   passport.deserializeUser(async (googleId: string, done) => {
     try {
       const user = await User.findOne({ googleId: googleId }).select(
-        '-password'
+        '-__v -_id'
       );
       done(null, user);
     } catch (err) {

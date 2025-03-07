@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import passport from 'passport';
 
-import { login, logout } from './auth.controller';
+import { login, logout, getUser } from './auth.controller';
 
 const router: Router = Router();
 
@@ -15,6 +15,8 @@ router.get(
   passport.authenticate('google', { failureRedirect: '/' }),
   login
 );
+
+router.get('/user', getUser);
 
 router.get('/logout', logout);
 
