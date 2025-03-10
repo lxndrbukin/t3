@@ -23,9 +23,9 @@ export default function Tasks() {
     <div className='tasks-board'>
       <h1>Tasks</h1>
       <div className='tasks-lists'>
-        <div className='tasks-list'>
+        <div className='tasks-list-container'>
           <h2>To Do</h2>
-          <ul>
+          <ul className='tasks-list'>
             <li>Task 1</li>
             <li>Task 2</li>
             <li>Task 3</li>
