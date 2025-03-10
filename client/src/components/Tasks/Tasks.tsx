@@ -26,17 +26,53 @@ export default function Tasks() {
         <div className='tasks-list-container'>
           <h2>To Do</h2>
           <ul className='tasks-list'>
-            <li>Task 1</li>
-            <li>Task 2</li>
-            <li>Task 3</li>
+            <li>
+              <div className='task'>
+                <h3>Task 1</h3>
+                <p>Description</p>
+                <p>Due Date</p>
+              </div>
+            </li>
+            <li>
+              <div className='task'>
+                <h3>Task 2</h3>
+                <p>Description</p>
+                <p>Due Date</p>
+              </div>
+            </li>
+            <li>
+              <div className='task'>
+                <h3>Task 3</h3>
+                <p>Description</p>
+                <p>Due Date</p>
+              </div>
+            </li>
           </ul>
         </div>
-        <div className='tasks-list'>
+        <div className='tasks-list-container'>
           <h2>In Progress</h2>
-          <ul>
-            <li>Task 1</li>
-            <li>Task 2</li>
-            <li>Task 3</li>
+          <ul className='tasks-list'>
+            <li>
+              <div className='task'>
+                <h3>Task 1</h3>
+                <p>Description</p>
+                <p>Due Date</p>
+              </div>
+            </li>
+            <li>
+              <div className='task'>
+                <h3>Task 2</h3>
+                <p>Description</p>
+                <p>Due Date</p>
+              </div>
+            </li>
+            <li>
+              <div className='task'>
+                <h3>Task 3</h3>
+                <p>Description</p>
+                <p>Due Date</p>
+              </div>
+            </li>
           </ul>
         </div>
       </div>
