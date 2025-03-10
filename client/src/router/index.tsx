@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import App from '../App';
 import Auth from '../components/Auth/Auth';
 import Dashboard from '../components/Dashboard/Dashboard';
+import Tasks from '../components/Tasks/Tasks';
 
 export const router = createBrowserRouter([
   {
@@ -18,7 +19,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/tasks',
-        element: <h1>Tasks</h1>,
+        element: <Tasks />,
       },
       {
         path: '/members',

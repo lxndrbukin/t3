@@ -1,0 +1,9 @@
+@import '../../../assets/variables.scss';
+
+.tasks-board {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+}
