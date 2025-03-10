@@ -1,3 +1,4 @@
+import './assets/styles.scss';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
