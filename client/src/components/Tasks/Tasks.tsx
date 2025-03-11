@@ -1,6 +1,6 @@
 import './assets/styles.scss';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 
@@ -22,6 +22,9 @@ export default function Tasks() {
   return (
     <div className='tasks-board'>
       <h1>Tasks</h1>
+      <div className='tasks-buttons'>
+        <Link to='/tasks/new'>New Task</Link>
+      </div>
       <div className='tasks-lists'>
         <div className='tasks-list-container'>
           <h2>To Do</h2>
