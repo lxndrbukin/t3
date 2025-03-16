@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SessionProps } from './types';
 import { getCurrentSession } from '../thunks/currentSession';
+import { googleLogin } from '../thunks/auth';
 
 const initialState: SessionProps = {
   isLoggedIn: false,

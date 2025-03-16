@@ -1,17 +1,23 @@
 import './assets/styles.scss';
 import { FormEvent } from 'react';
+import { useDispatch } from 'react-redux';
+import { AppDispatch, googleLogin } from '../../store';
 
 export default function Auth() {
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleClick = (event: FormEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    dispatch(googleLogin());
+  };
+
   return (
     <div className='auth'>
       <h1>Login</h1>
       <div className='auth-buttons'>
-        <a className='google' href='/v1/auth/google'>
+        <button className='google' onClick={handleClick}>
           <span>Login with Google</span>
-        </a>
-        <a className='facebook' href='/v1/auth/facebook'>
-          <span>Login with Facebook</span>
-        </a>
+        </button>
       </div>
     </div>
   );
