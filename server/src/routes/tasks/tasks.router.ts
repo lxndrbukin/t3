@@ -1,11 +1,11 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import {
-  getAllTodos,
-  createTodo,
-  updateTodo,
-  deleteTodo,
-  createTodoForm,
-} from './todos.controller';
+  getAllTasks,
+  createTasksForm,
+  createTask,
+  updateTask,
+  deleteTask,
+} from './tasks.controller';
 
 const router: Router = Router();
 
@@ -21,10 +21,10 @@ const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-router.get('/:userId', isAuthenticated, getAllTodos);
-router.get('/:userId/create-form', isAuthenticated, createTodoForm);
-router.post('/:userId/create', isAuthenticated, createTodo);
-router.put('/:userId/:id', isAuthenticated, updateTodo);
-router.delete('/:userId/:id', isAuthenticated, deleteTodo);
+router.get('/:userId', isAuthenticated, getAllTasks);
+router.get('/:userId/create-form', isAuthenticated, createTasksForm);
+router.post('/:userId/create', isAuthenticated, createTask);
+router.put('/:userId/:id', isAuthenticated, updateTask);
+router.delete('/:userId/:id', isAuthenticated, deleteTask);
 
 export default router;

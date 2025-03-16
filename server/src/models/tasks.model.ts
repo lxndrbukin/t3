@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
 
-const todoSchema = new mongoose.Schema({
+const tasksSchema = new mongoose.Schema({
   userId: {
     type: String,
     required: true,
   },
-  todos: [
+  tasks: [
     {
       id: {
         type: Number,
@@ -28,21 +28,26 @@ const todoSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
       },
+      dueDate: {
+        type: Date,
+        required: true,
+      },
     },
   ],
 });
 
-const TodoList = mongoose.model('TodoList', todoSchema);
+const TasksList = mongoose.model('TasksList', tasksSchema);
 
-export default TodoList;
+export default TasksList;
 
-export type TodoListType = mongoose.Document & {
+export type TasksListType = mongoose.Document & {
   userId: string;
-  todos: {
+  tasks: {
     id: number;
     title: string;
     description: string;
     completed: boolean;
     createdAt: Date;
+    dueDate: Date;
   }[];
 };

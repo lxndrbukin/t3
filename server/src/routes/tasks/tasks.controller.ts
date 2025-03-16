@@ -1,23 +1,23 @@
 import { Request, Response, NextFunction } from 'express';
-import TodoList from '../../models/todos.model';
+import TasksList from '../../models/tasks.model';
 
 const asyncHandler =
   (fn: any) => (req: Request, res: Response, next: NextFunction) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 
-export const getAllTodos = async (
+export const getAllTasks = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const todosList = await TodoList.findOne({
+    const tasksList = await TasksList.findOne({
       userId: (req.session as any).passport.user,
     }).select('-__v -_id -userId');
-    if (!todosList) {
-      res.status(404).json({ message: 'Todo list not found' });
+    if (!tasksList) {
+      res.status(404).json({ message: 'Tasks list not found' });
     } else {
-      res.json(todosList.todos);
+      res.json(tasksList.tasks);
     }
   } catch (error) {
     res.status(500).json({
@@ -26,39 +26,40 @@ export const getAllTodos = async (
   }
 };
 
-export const createTodoForm = (req: Request, res: Response) => {
+export const createTasksForm = (req: Request, res: Response) => {
   res.send(`
-    <form method="POST" action="/v1/todos/${req.params.userId}/create">
+    <form method="POST" action="/v1/tasks/${req.params.userId}/create">
       <input type="text" name="title" placeholder="Title" />
       <input type="text" name="description" placeholder="Description" />
-      <button type="submit">Create Todo</button>
+      <button type="submit">Create Task</button>
     </form>
   `);
 };
 
-export const createTodo = async (req: Request, res: Response) => {
+export const createTask = async (req: Request, res: Response) => {
   try {
-    let todosList = await TodoList.findOne({
+    let tasksList = await TasksList.findOne({
       userId: (req.session as any).passport.user as string,
     });
-    if (!todosList) {
-      todosList = await TodoList.create({
+    if (!tasksList) {
+      tasksList = await TasksList.create({
         userId: (req.session as any).passport.user as string,
-        todos: [
+        tasks: [
           {
             id: 1,
             title: req.body.title,
             description: req.body.description,
+            dueDate: req.body.dueDate,
           },
         ],
       });
     } else {
-      todosList = await TodoList.findOneAndUpdate(
+      tasksList = await TasksList.findOneAndUpdate(
         { userId: (req.session as any).passport.user },
-        { $push: { todos: { id: todosList.todos.length + 1, ...req.body } } }
+        { $push: { tasks: { id: tasksList.tasks.length + 1, ...req.body } } }
       );
     }
-    res.status(201).json(todosList);
+    res.status(201).json(tasksList);
   } catch (error) {
     res.status(500).json({
       message: error instanceof Error ? error.message : 'Unknown error',
@@ -66,7 +67,7 @@ export const createTodo = async (req: Request, res: Response) => {
   }
 };
 
-export const updateTodo = asyncHandler(
+export const updateTask = asyncHandler(
   async (req: Request<{ id: string }>, res: Response) => {
     try {
       const userId = (req.session as any).passport?.user as string;
@@ -74,24 +75,24 @@ export const updateTodo = asyncHandler(
         return res.status(401).json({ message: 'Unauthorized, please log in' });
       }
 
-      let todosList = await TodoList.findOne({ userId });
+      let tasksList = await TasksList.findOne({ userId });
 
-      if (!todosList) {
-        return res.status(404).json({ message: 'Todo list not found' });
+      if (!tasksList) {
+        return res.status(404).json({ message: 'Tasks list not found' });
       }
 
-      let todo = todosList.todos.find(
-        (todo) => String(todo.id) === req.params.id
+      let task = tasksList.tasks.find(
+        (task) => String(task.id) === req.params.id
       );
 
-      if (!todo) {
-        return res.status(404).json({ message: 'Todo not found' });
+      if (!task) {
+        return res.status(404).json({ message: 'Task not found' });
       }
-      Object.assign(todo, req.body);
+      Object.assign(task, req.body);
 
-      await todosList.save();
+      await tasksList.save();
 
-      res.json({ message: 'Todo updated successfully', todo });
+      res.json({ message: 'Task updated successfully', task });
     } catch (error) {
       res.status(500).json({
         message: error instanceof Error ? error.message : 'Unknown error',
@@ -100,29 +101,29 @@ export const updateTodo = asyncHandler(
   }
 );
 
-export const deleteTodo = asyncHandler(
+export const deleteTask = asyncHandler(
   async (req: Request<{ id: string }>, res: Response) => {
     const userId = (req.session as any).passport?.user as string;
     if (!userId) {
       return res.status(401).json({ message: 'Unauthorized, please log in' });
     }
 
-    const todosList = await TodoList.findOne({ userId });
-    if (!todosList) {
-      return res.status(404).json({ message: 'Todo list not found' });
+    const tasksList = await TasksList.findOne({ userId });
+    if (!tasksList) {
+      return res.status(404).json({ message: 'Tasks list not found' });
     }
 
-    const todoIndex = todosList.todos.findIndex(
-      (todo) => String(todo.id) === req.params.id
+    const taskIndex = tasksList.tasks.findIndex(
+      (task) => String(task.id) === req.params.id
     );
-    if (todoIndex === -1) {
-      return res.status(404).json({ message: 'Todo not found' });
+    if (taskIndex === -1) {
+      return res.status(404).json({ message: 'Task not found' });
     } else {
-      todosList.todos.splice(todoIndex, 1);
+      tasksList.tasks.splice(taskIndex, 1);
     }
 
-    await todosList.save();
+    await tasksList.save();
 
-    res.json({ message: 'Todo deleted successfully' });
+    res.json({ message: 'Task deleted successfully' });
   }
 );
