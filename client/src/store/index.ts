@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import session from './slices/sessionSlice';
+import tasks from './slices/tasksSlice';
 
 export const store = configureStore({
   reducer: {
     session,
+    tasks,
   },
 });
 
