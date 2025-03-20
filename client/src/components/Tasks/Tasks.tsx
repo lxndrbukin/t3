@@ -16,11 +16,24 @@ export default function Tasks() {
 
   const convertDate = (dateString: string) => {
     const date = new Date(dateString);
+    const today = new Date();
+    const tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 1);
+
+    const formatDate = (d: Date) => d.toISOString().split('T')[0];
+
+    if (formatDate(date) === formatDate(today)) {
+      return 'Today';
+    } else if (formatDate(date) === formatDate(tomorrow)) {
+      return 'Tomorrow';
+    }
+
     const day = date.getDate();
     const dd = day < 10 ? `0${day}` : day;
     const month = date.getMonth() + 1;
     const mm = month < 10 ? `0${month}` : month;
     const year = date.getFullYear();
+
     return `${dd}/${mm}/${year}`;
   };
 
@@ -40,38 +53,12 @@ export default function Tasks() {
     <div className='tasks-board'>
       <h1>Tasks</h1>
       <div className='tasks-buttons'>
-        <Link to='/tasks/new'>New Task</Link>
+        <Link to='/tasks/categories/new'>Create Category</Link>
+        <Link to='/tasks/new'>Create Task</Link>
       </div>
       <div className='tasks-lists'>
         <div className='tasks-list-container'>
-          <h2>To Do</h2>
           <ul className='tasks-list'>{renderTasks()}</ul>
-        </div>
-        <div className='tasks-list-container'>
-          <h2>In Progress</h2>
-          <ul className='tasks-list'>
-            <li>
-              <div className='task'>
-                <h3>Task 1</h3>
-                <p>Description</p>
-                <p>Due Date</p>
-              </div>
-            </li>
-            <li>
-              <div className='task'>
-                <h3>Task 2</h3>
-                <p>Description</p>
-                <p>Due Date</p>
-              </div>
-            </li>
-            <li>
-              <div className='task'>
-                <h3>Task 3</h3>
-                <p>Description</p>
-                <p>Due Date</p>
-              </div>
-            </li>
-          </ul>
         </div>
       </div>
     </div>

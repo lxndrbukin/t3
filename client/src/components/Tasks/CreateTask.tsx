@@ -37,7 +37,7 @@ export default function CreateTask() {
   };
 
   return (
-    <div className='create-task'>
+    <div className='create'>
       <h1>Create Task</h1>
       <form onSubmit={handleSubmit}>
         <input
