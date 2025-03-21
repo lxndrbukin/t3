@@ -9,3 +9,11 @@ export const createTask = createAsyncThunk(
     return response.data;
   }
 );
+
+export const getAllTasks = createAsyncThunk(
+  'tasks/getAllTasks',
+  async (id: string) => {
+    const response = await axios.get(`/v1/tasks/${id}`);
+    return response.data;
+  }
+);
