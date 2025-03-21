@@ -1,10 +1,90 @@
 import { Request, Response, NextFunction } from 'express';
-import TasksList from '../../models/tasks.model';
+import { TasksList, TaskCategories } from '../../models/tasks.model';
 
 const asyncHandler =
   (fn: any) => (req: Request, res: Response, next: NextFunction) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
+
+export const getAllTasksCategories = async (req: Request, res: Response) => {
+  const taskCategoriesList = await TaskCategories.findOne({
+    userId: (req.session as any).passport.user,
+  }).select('-__v -_id -userId');
+  if (!taskCategoriesList) {
+    res.status(404).json({ message: 'Task categories list not found' });
+  } else {
+    res.json(taskCategoriesList.categories);
+  }
+};
+
+export const createTasksCategory = async (req: Request, res: Response) => {
+  let taskCategoriesList = await TaskCategories.findOneAndUpdate(
+    { userId: (req.session as any).passport.user },
+    { $push: { categories: req.body } }
+  )
+    .select('-__v -_id -userId')
+    .lean();
+  if (!taskCategoriesList) {
+    taskCategoriesList = await TaskCategories.create({
+      userId: (req.session as any).passport.user,
+      categories: [req.body],
+    });
+  }
+  const categoryExists = taskCategoriesList.categories.find(
+    (category) => category.name === req.body.name
+  );
+  if (categoryExists) {
+    return res.status(400).json({ message: 'Category already exists' });
+  }
+  res.json(taskCategoriesList);
+};
+
+export const updateTaskCategory = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const taskCategoriesList = await TaskCategories.findOneAndUpdate(
+      { userId: (req.session as any).passport.user },
+      { $set: { 'categories.$[category]': req.body } },
+      { arrayFilters: [{ 'category._id': req.params.id }] }
+    )
+      .select('-__v -_id -userId')
+      .lean();
+    if (!taskCategoriesList) {
+      res.status(404).json({ message: 'Task categories list not found' });
+    } else {
+      res.json(taskCategoriesList);
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+};
+
+export const deleteTaskCategory = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const taskCategoriesList = await TaskCategories.findOneAndUpdate(
+      { userId: (req.session as any).passport.user },
+      { $pull: { categories: { _id: req.params.id } } }
+    )
+      .select('-__v -_id -userId')
+      .lean();
+    if (!taskCategoriesList) {
+      res.status(404).json({ message: 'Task categories list not found' });
+    } else {
+      res.json(taskCategoriesList);
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+};
 
 export const getAllTasks = async (
   req: Request,
@@ -24,16 +104,6 @@ export const getAllTasks = async (
       message: error instanceof Error ? error.message : 'Unknown error',
     });
   }
-};
-
-export const createTasksForm = (req: Request, res: Response) => {
-  res.send(`
-    <form method="POST" action="/v1/tasks/${req.params.userId}/create">
-      <input type="text" name="title" placeholder="Title" />
-      <input type="text" name="description" placeholder="Description" />
-      <button type="submit">Create Task</button>
-    </form>
-  `);
 };
 
 export const createTask = async (req: Request, res: Response) => {
