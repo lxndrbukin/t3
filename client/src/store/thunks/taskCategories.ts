@@ -11,8 +11,8 @@ export const getAllTaskCategories = createAsyncThunk(
 
 export const createTaskCategory = createAsyncThunk(
   'tasks/createTaskCategory',
-  async ({ id, data }: { id: string; data: any }) => {
-    const response = await axios.post(`/v1/categories/${id}`, data);
+  async ({ userId, data }: { userId: string; data: any }) => {
+    const response = await axios.post(`/v1/categories/${userId}`, data);
     return response.data;
   }
 );
