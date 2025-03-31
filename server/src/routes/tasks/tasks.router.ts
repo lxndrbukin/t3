@@ -1,7 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import {
   getAllTasks,
-  createTasksForm,
   createTask,
   updateTask,
   deleteTask,
@@ -22,7 +21,6 @@ const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
 };
 
 router.get('/:userId', isAuthenticated, getAllTasks);
-router.get('/:userId/create-form', isAuthenticated, createTasksForm);
 router.post('/:userId', isAuthenticated, createTask);
 router.put('/:userId/:id', isAuthenticated, updateTask);
 router.delete('/:userId/:id', isAuthenticated, deleteTask);
