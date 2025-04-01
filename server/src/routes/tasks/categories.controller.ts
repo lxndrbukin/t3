@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { TaskCategories } from '../../models/tasks.model';
+import { TaskCategories } from '../../models/categories.model';
 
 export const getAllTasksCategories = async (req: Request, res: Response) => {
   const taskCategoriesList = await TaskCategories.findOne({
@@ -12,26 +12,48 @@ export const getAllTasksCategories = async (req: Request, res: Response) => {
   }
 };
 
-export const createTasksCategory = async (req: Request, res: Response) => {
-  let taskCategoriesList = await TaskCategories.findOneAndUpdate(
-    { userId: (req.session as any).passport.user },
-    { $push: { categories: req.body } }
-  )
-    .select('-__v -_id -userId')
-    .lean();
-  if (!taskCategoriesList) {
-    taskCategoriesList = await TaskCategories.create({
-      userId: (req.session as any).passport.user,
-      categories: [req.body],
-    });
+export const createTasksCategory = async (
+  req: Request<{ userId: string }>,
+  res: Response
+): Promise<void> => {
+  try {
+    const userId = req.params.userId;
+    let taskCategoriesList = await TaskCategories.findOne({ userId })
+      .select('-__v -_id -userId')
+      .lean();
+
+    if (!taskCategoriesList) {
+      taskCategoriesList = await TaskCategories.create({
+        userId,
+        categories: [{ id: 1, name: req.body.category }],
+      });
+    } else {
+      const categoryExists = taskCategoriesList.categories.find(
+        (category) => category.name === req.body.name
+      );
+
+      if (categoryExists) {
+        res.status(400).json({ message: 'Category already exists' });
+        return;
+      }
+
+      taskCategoriesList = await TaskCategories.findOneAndUpdate(
+        { userId },
+        {
+          $push: {
+            categories: {
+              id: (taskCategoriesList?.categories?.length || 0) + 1,
+              name: req.body.category,
+            },
+          },
+        },
+        { new: true, runValidators: true }
+      );
+    }
+    res.json(taskCategoriesList);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
   }
-  const categoryExists = taskCategoriesList.categories.find(
-    (category) => category.name === req.body.name
-  );
-  if (categoryExists) {
-    res.status(400).json({ message: 'Category already exists' });
-  }
-  res.json(taskCategoriesList);
 };
 
 export const updateTasksCategory = async (
