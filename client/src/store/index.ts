@@ -15,3 +15,4 @@ export type AppDispatch = typeof store.dispatch;
 export * from './thunks/currentSession';
 export * from './thunks/auth';
 export * from './thunks/tasks';
+export * from './thunks/taskCategories';
