@@ -36,30 +36,7 @@ const tasksSchema = new mongoose.Schema({
   ],
 });
 
-const taskCategoriesSchema = new mongoose.Schema({
-  userId: {
-    type: String,
-    required: true,
-  },
-  categories: [
-    {
-      id: {
-        type: Number,
-        required: true,
-        unique: true,
-      },
-      name: {
-        type: String,
-        required: true,
-      },
-    },
-  ],
-});
-
-const TasksList = mongoose.model('TasksList', tasksSchema);
-const TaskCategories = mongoose.model('TaskCategories', taskCategoriesSchema);
-
-export { TasksList, TaskCategories };
+export const TasksList = mongoose.model('TasksList', tasksSchema);
 
 export type TasksListType = mongoose.Document & {
   userId: string;
