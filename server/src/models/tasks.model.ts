@@ -20,6 +20,10 @@ const tasksSchema = new mongoose.Schema({
         type: String,
         required: true,
       },
+      category: {
+        type: String,
+        default: 'Uncategorized',
+      },
       completed: {
         type: Boolean,
         default: false,
@@ -31,6 +35,23 @@ const tasksSchema = new mongoose.Schema({
       dueDate: {
         type: Date,
         required: true,
+      },
+    },
+  ],
+  categories: [
+    {
+      id: {
+        type: Number,
+        required: true,
+        unique: true,
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+      createdAt: {
+        type: Date,
+        default: Date.now,
       },
     },
   ],

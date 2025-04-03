@@ -6,6 +6,99 @@ const asyncHandler =
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 
+export const createTasksCategory = async (
+  req: Request<{ userId: string }>,
+  res: Response
+): Promise<void> => {
+  try {
+    const userId = req.params.userId;
+    let tasksList = await TasksList.findOne({ userId })
+      .select('-__v -_id -userId')
+      .lean();
+
+    if (!tasksList) {
+      tasksList = await TasksList.create({
+        userId,
+        categories: [{ id: 1, name: req.body.category }],
+        tasks: [],
+      });
+    } else {
+      const categoryExists = tasksList.categories.find(
+        (category) => category.name === req.body.name
+      );
+
+      if (categoryExists) {
+        res.status(400).json({ message: 'Category already exists' });
+        return;
+      }
+
+      tasksList = await TasksList.findOneAndUpdate(
+        { userId },
+        {
+          $push: {
+            categories: {
+              id: (tasksList?.categories?.length || 0) + 1,
+              name: req.body.category,
+            },
+          },
+        },
+        { new: true, runValidators: true }
+      );
+
+      res.json(tasksList);
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+export const updateTasksCategory = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const taskCategoriesList = await TasksList.findOneAndUpdate(
+      { userId: (req.session as any).passport.user },
+      { $set: { 'categories.$[category]': req.body } },
+      { arrayFilters: [{ 'category.id': req.params.id }] }
+    )
+      .select('-__v -_id -userId')
+      .lean();
+    if (!taskCategoriesList) {
+      res.status(404).json({ message: 'Task categories list not found' });
+    } else {
+      res.json(taskCategoriesList);
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+};
+
+export const deleteTasksCategory = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const taskCategoriesList = await TasksList.findOneAndUpdate(
+      { userId: (req.session as any).passport.user },
+      { $pull: { categories: { id: req.params.id } } }
+    )
+      .select('-__v -_id -userId')
+      .lean();
+    if (!taskCategoriesList) {
+      res.status(404).json({ message: 'Task categories list not found' });
+    } else {
+      res.json(taskCategoriesList);
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+};
+
 export const getAllTasks = async (
   req: Request,
   res: Response
