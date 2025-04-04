@@ -1,10 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { TaskProps } from './types';
 import { getAllTasks } from '../thunks/tasks';
-import {
-  getAllTaskCategories,
-  createTaskCategory,
-} from '../thunks/taskCategories';
+import { createTaskCategory } from '../thunks/taskCategories';
 
 const initialState: { list: TaskProps[]; categories: string[] } = {
   list: [],
@@ -18,14 +15,12 @@ const tasksSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(
       getAllTasks.fulfilled,
-      (state: { list: TaskProps[] }, action: PayloadAction<TaskProps[]>) => {
-        state.list = action.payload;
-      }
-    );
-    builder.addCase(
-      getAllTaskCategories.fulfilled,
-      (state: { categories: string[] }, action: PayloadAction<string[]>) => {
-        state.categories = action.payload;
+      (
+        state: { list: TaskProps[]; categories: string[] },
+        action: PayloadAction<{ tasks: TaskProps[]; categories: string[] }>
+      ) => {
+        state.list = action.payload.tasks;
+        state.categories = action.payload.categories;
       }
     );
     builder.addCase(
