@@ -29,12 +29,13 @@ export const getList = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const createItem = async (req: Request, res: Response) => {
+  const userId = (req.session as any).passport?.user as string;
+  let tasksList = await TasksList.findOne({
+    userId,
+  });
   switch (req.body.type as ItemType) {
     case ItemType.TASK:
       try {
-        let tasksList = await TasksList.findOne({
-          userId: (req.session as any).passport.user as string,
-        });
         if (!tasksList) {
           tasksList = await TasksList.create({
             userId: (req.session as any).passport.user as string,
@@ -49,7 +50,7 @@ export const createItem = async (req: Request, res: Response) => {
           });
         } else {
           tasksList = await TasksList.findOneAndUpdate(
-            { userId: (req.session as any).passport.user },
+            { userId },
             {
               $push: { tasks: { id: tasksList.tasks.length + 1, ...req.body } },
             }
@@ -65,10 +66,6 @@ export const createItem = async (req: Request, res: Response) => {
     case ItemType.CATEGORY:
       try {
         const userId = req.params.userId;
-        let tasksList = await TasksList.findOne({ userId })
-          .select('-__v -_id -userId')
-          .lean();
-
         if (!tasksList) {
           tasksList = await TasksList.create({
             userId,
@@ -79,12 +76,10 @@ export const createItem = async (req: Request, res: Response) => {
           const categoryExists = tasksList.categories.find(
             (category) => category.name === req.body.name
           );
-
           if (categoryExists) {
             res.status(400).json({ message: 'Category already exists' });
             return;
           }
-
           tasksList = await TasksList.findOneAndUpdate(
             { userId },
             {
@@ -97,10 +92,10 @@ export const createItem = async (req: Request, res: Response) => {
             },
             { new: true, runValidators: true }
           );
-
           res.json(tasksList);
         }
       } catch (error) {
+        console.error(error);
         res.status(500).json({ message: 'Internal server error' });
       }
       break;
@@ -110,15 +105,14 @@ export const createItem = async (req: Request, res: Response) => {
 export const updateItem = asyncHandler(
   async (req: Request<{ id: string }>, res: Response) => {
     const userId = (req.session as any).passport?.user as string;
+    let tasksList = await TasksList.findOne({
+      userId,
+    });
     switch (req.body.type as ItemType) {
       case ItemType.TASK:
-        const tasksList = await TasksList.findOne({
-          userId,
-        });
         if (!tasksList) {
           return res.status(404).json({ message: 'Tasks list not found' });
         }
-
         const taskIndex = tasksList.tasks.findIndex(
           (task) => String(task.id) === req.params.id
         );
@@ -134,17 +128,14 @@ export const updateItem = asyncHandler(
         }
         break;
       case ItemType.CATEGORY:
-        const taskCategoriesList = await TasksList.findOneAndUpdate(
+        tasksList = await TasksList.findOneAndUpdate(
           { userId },
-          { $set: { 'categories.$[category]': req.body } },
-          { arrayFilters: [{ 'category.id': req.params.id }] }
-        )
-          .select('-__v -_id -userId')
-          .lean();
-        if (!taskCategoriesList) {
+          { $set: { [`categories.${req.params.id}`]: req.body } }
+        );
+        if (!tasksList) {
           res.status(404).json({ message: 'Task categories list not found' });
         } else {
-          res.json(taskCategoriesList);
+          res.json(tasksList);
         }
         break;
     }
@@ -154,13 +145,12 @@ export const updateItem = asyncHandler(
 export const deleteItem = asyncHandler(
   async (req: Request<{ id: string }>, res: Response) => {
     const userId = (req.session as any).passport?.user as string;
+    let tasksList = await TasksList.findOne({ userId });
     switch (req.body.type as ItemType) {
       case ItemType.TASK:
-        const tasksList = await TasksList.findOne({ userId });
         if (!tasksList) {
           return res.status(404).json({ message: 'Tasks list not found' });
         }
-
         const taskIndex = tasksList.tasks.findIndex(
           (task) => String(task.id) === req.params.id
         );
@@ -173,16 +163,14 @@ export const deleteItem = asyncHandler(
         }
         break;
       case ItemType.CATEGORY:
-        const taskCategoriesList = await TasksList.findOneAndUpdate(
+        tasksList = await TasksList.findOneAndUpdate(
           { userId },
-          { $pull: { categories: { id: req.params.id } } }
-        )
-          .select('-__v -_id -userId')
-          .lean();
-        if (!taskCategoriesList) {
+          { $unset: { [`categories.${req.params.id}`]: '' } }
+        );
+        if (!tasksList) {
           res.status(404).json({ message: 'Task categories list not found' });
         } else {
-          res.json(taskCategoriesList);
+          res.json(tasksList);
         }
         break;
     }
