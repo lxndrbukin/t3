@@ -2,7 +2,12 @@ import './assets/styles.scss';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { AppDispatch, RootState, getAllTasks } from '../../store';
+import {
+  AppDispatch,
+  RootState,
+  getAllTasks,
+  getAllTaskCategories,
+} from '../../store';
 
 export default function Tasks() {
   const dispatch = useDispatch<AppDispatch>();
@@ -12,6 +17,7 @@ export default function Tasks() {
   useEffect(() => {
     if (!user?.googleId) return;
     dispatch(getAllTasks(user.googleId));
+    dispatch(getAllTaskCategories(user.googleId));
   }, [dispatch, user?.googleId]);
 
   const convertDate = (dateString: string) => {
