@@ -1,12 +1,12 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import {
-  getAllTasks,
-  createTask,
-  updateTask,
-  deleteTask,
+  getList,
+  createItem,
+  updateItem,
+  deleteItem,
 } from './tasks.controller';
 
-const router: Router = Router();
+const tasksRouter: Router = Router();
 
 const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
   const { userId } = req.params;
@@ -20,9 +20,9 @@ const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-router.get('/:userId', isAuthenticated, getAllTasks);
-router.post('/:userId', isAuthenticated, createTask);
-router.put('/:userId/:id', isAuthenticated, updateTask);
-router.delete('/:userId/:id', isAuthenticated, deleteTask);
+tasksRouter.get('/:userId', isAuthenticated, getList);
+tasksRouter.post('/:userId', isAuthenticated, createItem);
+tasksRouter.put('/:userId/:id', isAuthenticated, updateItem);
+tasksRouter.delete('/:userId/:id', isAuthenticated, deleteItem);
 
-export default router;
+export default tasksRouter;
