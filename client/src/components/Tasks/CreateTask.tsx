@@ -32,25 +32,23 @@ export default function CreateTask() {
   };
 
   return (
-    <div className='popup'>
-      <div className='create'>
-        <h1>Create Task</h1>
-        <form onSubmit={handleSubmit}>
-          <input
-            onChange={handleInputChange}
-            type='text'
-            name='title'
-            placeholder='Title'
-          />
-          <textarea
-            onChange={handleInputChange}
-            name='description'
-            placeholder='Description'
-          />
-          <input type='date' name='dueDate' onChange={handleInputChange} />
-          <button type='submit'>Create</button>
-        </form>
-      </div>
+    <div className='create'>
+      <h1>Create Task</h1>
+      <form onSubmit={handleSubmit}>
+        <input
+          onChange={handleInputChange}
+          type='text'
+          name='title'
+          placeholder='Title'
+        />
+        <textarea
+          onChange={handleInputChange}
+          name='description'
+          placeholder='Description'
+        />
+        <input type='date' name='dueDate' onChange={handleInputChange} />
+        <button type='submit'>Create</button>
+      </form>
     </div>
   );
 }
