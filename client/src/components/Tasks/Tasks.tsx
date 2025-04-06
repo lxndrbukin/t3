@@ -1,6 +1,5 @@
 import './assets/styles.scss';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { AppDispatch, RootState, getAllTasks } from '../../store';
 import { convertDate } from './assets/helpers';
@@ -37,7 +36,7 @@ export default function Tasks() {
   const createTaskPopup = () => {
     return (
       <Popup setIsVisible={setShowCreateTask}>
-        <CreateTask />
+        <CreateTask setIsVisible={setShowCreateTask} />
       </Popup>
     );
   };
@@ -45,7 +44,7 @@ export default function Tasks() {
   const createCategoryPopup = () => {
     return (
       <Popup setIsVisible={setShowCreateCategory}>
-        <CreateCategory />
+        <CreateCategory setIsVisible={setShowCreateCategory} />
       </Popup>
     );
   };

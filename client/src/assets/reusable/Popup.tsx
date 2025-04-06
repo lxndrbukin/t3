@@ -1,9 +1,9 @@
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useRef } from 'react';
 
-type PopupProps = {
+interface PopupProps {
   children: ReactNode;
   setIsVisible: (isVisible: boolean) => void;
-};
+}
 
 export default function Popup({ children, setIsVisible }: PopupProps) {
   const popupRef = useRef<HTMLDivElement>(null);
