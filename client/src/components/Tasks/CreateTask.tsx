@@ -29,7 +29,7 @@ export default function CreateTask({ setIsVisible }: CreateTaskProps) {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(createTask({ id: (user as any).googleId, data: formData }));
+    dispatch(createTask({ userId: (user as any).googleId, data: formData }));
     setIsVisible(false);
   };
 
