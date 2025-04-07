@@ -97,3 +97,44 @@
     }
   }
 }
+
+.task {
+  display: flex;
+  padding: 8px;
+  border: 2px solid $color-light-grey;
+  border-radius: 4px;
+  background-color: $color-white;
+
+  .task-info {
+    display: flex;
+    flex-direction: column;
+
+    .task-info-header {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+
+    .task-info-body {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+
+    .task-info-footer {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+
+  .task-comments {
+    display: flex;
+    flex-direction: column;
+
+    .task-comments-container {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}
