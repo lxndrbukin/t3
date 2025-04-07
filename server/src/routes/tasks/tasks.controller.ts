@@ -10,13 +10,42 @@ const asyncHandler =
 
 export const getList = async (req: Request, res: Response): Promise<void> => {
   try {
-    const tasksList = await TasksList.findOne({
-      userId: (req.session as any).passport.user,
-    }).select('-__v -_id -userId');
+    const tasksList = await TasksList.findOne(
+      {
+        userId: (req.session as any).passport.user,
+      },
+      {
+        'tasks.id': 1,
+        'tasks.title': 1,
+        'tasks.description': 1,
+        'tasks.dueDate': 1,
+        'categories.id': 1,
+        'categories.name': 1,
+      }
+    ).select('-__v -_id -userId');
     if (!tasksList) {
       res.status(404).json({ message: ErrorMessage.TASKS_LIST_NOT_FOUND });
     } else {
       res.json(tasksList);
+    }
+  } catch (error) {
+    res.status(500).json({
+      message:
+        error instanceof Error ? error.message : ErrorMessage.UNKNOWN_ERROR,
+    });
+  }
+};
+
+export const getItem = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const tasksList = await TasksList.findOne({
+      userId: (req.session as any).passport.user,
+      tasks: { $elemMatch: { id: Number(req.params.id) } },
+    });
+    if (!tasksList) {
+      res.status(404).json({ message: ErrorMessage.TASK_NOT_FOUND });
+    } else {
+      res.json(tasksList.tasks[0]);
     }
   } catch (error) {
     res.status(500).json({
