@@ -1,24 +1,24 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, getTask } from '../../store';
+import { AppDispatch, RootState, getTask } from '../../store';
 
-export default function TaskInfo() {
+export default function TaskInfo({ taskId }: { taskId: number }) {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { task } = useSelector((state: any) => state.tasks);
-  const { user } = useSelector((state: any) => state.session);
+  const { currentTask } = useSelector((state: RootState) => state.tasks);
+  const { user } = useSelector((state: RootState) => state.session);
 
   useEffect(() => {
     dispatch(
       getTask({
         userId: (user as any).googleId,
-        taskId: task.id,
+        taskId,
       })
     );
-  }, [dispatch, task.id, user?.googleId]);
+  }, [dispatch, taskId, user?.googleId]);
 
   return (
-    <div className='task'>
+    <div className='task-container'>
       <div className='task-info'>
         <div className='task-info-header'>
           <h1>Task Name</h1>

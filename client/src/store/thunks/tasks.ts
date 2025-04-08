@@ -12,7 +12,7 @@ export const createTask = createAsyncThunk(
 
 export const getTask = createAsyncThunk(
   'tasks/getTask',
-  async ({ userId, taskId }: { userId: string; taskId: string }) => {
+  async ({ userId, taskId }: { userId: string; taskId: number }) => {
     const response = await axios.get(`/v1/tasks/${userId}/${taskId}`);
     return response.data;
   }

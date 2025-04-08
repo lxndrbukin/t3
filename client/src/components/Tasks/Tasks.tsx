@@ -7,6 +7,7 @@ import { convertDate } from './assets/helpers';
 import CreateTask from './CreateTask';
 import CreateCategory from './CreateCategory';
 import Popup from '../../assets/reusable/Popup';
+import TaskInfo from './TaskInfo';
 
 export default function Tasks() {
   const dispatch = useDispatch<AppDispatch>();
@@ -15,15 +16,22 @@ export default function Tasks() {
 
   const [showCreateTask, setShowCreateTask] = useState<boolean>(false);
   const [showCreateCategory, setShowCreateCategory] = useState<boolean>(false);
+  const [showTaskInfo, setShowTaskInfo] = useState<boolean>(false);
+  const [taskId, setTaskId] = useState<number | null>(null);
 
   useEffect(() => {
     if (!user?.googleId) return;
     dispatch(getAllTasks(user.googleId));
   }, [dispatch, user?.googleId]);
 
+  const handleTaskClick = (taskId: number) => {
+    setTaskId(taskId);
+    setShowTaskInfo(true);
+  };
+
   const renderTasks = () => {
     return list.map((task) => (
-      <li key={task.id}>
+      <li onClick={() => handleTaskClick(task.id)} key={task.id}>
         <div className='task'>
           <h3>{task.title}</h3>
           <p>{task.description}</p>
@@ -33,7 +41,7 @@ export default function Tasks() {
     ));
   };
 
-  const createTaskPopup = () => {
+  const renderTaskPopup = () => {
     return (
       <Popup setIsVisible={setShowCreateTask}>
         <CreateTask setIsVisible={setShowCreateTask} />
@@ -41,10 +49,18 @@ export default function Tasks() {
     );
   };
 
-  const createCategoryPopup = () => {
+  const renderCategoryPopup = () => {
     return (
       <Popup setIsVisible={setShowCreateCategory}>
         <CreateCategory setIsVisible={setShowCreateCategory} />
+      </Popup>
+    );
+  };
+
+  const renderTaskInfoPopup = () => {
+    return (
+      <Popup setIsVisible={setShowTaskInfo}>
+        <TaskInfo taskId={taskId as number} />
       </Popup>
     );
   };
@@ -65,8 +81,9 @@ export default function Tasks() {
           </div>
         </div>
       </div>
-      {showCreateTask && createTaskPopup()}
-      {showCreateCategory && createCategoryPopup()}
+      {showCreateTask && renderTaskPopup()}
+      {showCreateCategory && renderCategoryPopup()}
+      {showTaskInfo && renderTaskInfoPopup()}
     </>
   );
 }
