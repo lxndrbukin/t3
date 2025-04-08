@@ -38,10 +38,15 @@ export const getList = async (req: Request, res: Response): Promise<void> => {
 
 export const getItem = async (req: Request, res: Response): Promise<void> => {
   try {
-    const tasksList = await TasksList.findOne({
-      userId: (req.session as any).passport.user,
-      tasks: { $elemMatch: { id: Number(req.params.id) } },
-    });
+    const tasksList = await TasksList.findOne(
+      {
+        userId: (req.session as any).passport.user,
+        tasks: { $elemMatch: { id: Number(req.params.id) } },
+      },
+      {
+        'tasks.$': 1,
+      }
+    );
     if (!tasksList) {
       res.status(404).json({ message: ErrorMessage.TASK_NOT_FOUND });
     } else {
