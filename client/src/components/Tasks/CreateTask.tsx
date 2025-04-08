@@ -2,7 +2,9 @@ import { FormEvent, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState, createTask } from '../../store';
 
-export default function CreateTask() {
+import { CreateTaskProps } from './types';
+
+export default function CreateTask({ setIsVisible }: CreateTaskProps) {
   const { user } = useSelector((state: RootState) => state.session);
   const [formData, setFormData] = useState<{
     title: string;
@@ -13,7 +15,6 @@ export default function CreateTask() {
     description: '',
     dueDate: new Date(),
   });
-  const [date, setDate] = useState<Date | Date[]>(new Date());
   const dispatch = useDispatch<AppDispatch>();
 
   const handleInputChange = (
@@ -26,19 +27,15 @@ export default function CreateTask() {
     }));
   };
 
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newDate = new Date(e.target.value);
-    if (!isNaN(newDate.getTime())) setDate(newDate);
-  };
-
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(createTask({ id: (user as any).googleId, data: formData }));
+    dispatch(createTask({ userId: (user as any).googleId, data: formData }));
+    setIsVisible(false);
   };
 
   return (
     <div className='create'>
-      <h1>Create Task</h1>
+      <h1>New Task</h1>
       <form onSubmit={handleSubmit}>
         <input
           onChange={handleInputChange}
@@ -52,7 +49,7 @@ export default function CreateTask() {
           placeholder='Description'
         />
         <input type='date' name='dueDate' onChange={handleInputChange} />
-        <button type='submit'>Create</button>
+        <button type='submit'>Submit</button>
       </form>
     </div>
   );

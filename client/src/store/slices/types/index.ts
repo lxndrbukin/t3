@@ -9,6 +9,12 @@ export type SessionProps = {
     | undefined;
 };
 
+export type TasksProps = {
+  list: TaskProps[];
+  currentTask: TaskProps | null;
+  categories: string[];
+};
+
 export type TaskProps = {
   id: number;
   title: string;

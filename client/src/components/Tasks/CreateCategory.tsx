@@ -2,7 +2,9 @@ import { FormEvent, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, createTaskCategory } from '../../store';
 
-export default function CreateCategory() {
+import { CreateCategoryProps } from './types';
+
+export default function CreateCategory({ setIsVisible }: CreateCategoryProps) {
   const dispatch = useDispatch<AppDispatch>();
 
   const { user } = useSelector((state: any) => state.session);
@@ -20,11 +22,12 @@ export default function CreateCategory() {
         data: { category },
       })
     );
+    setIsVisible(false);
   };
 
   return (
     <div className='create'>
-      <h1>Create Category</h1>
+      <h1>New Category</h1>
       <form onSubmit={handleSubmit}>
         <input
           type='text'
@@ -32,7 +35,7 @@ export default function CreateCategory() {
           onChange={handleChange}
           placeholder='Category Name'
         />
-        <button type='submit'>Create</button>
+        <button type='submit'>Submit</button>
       </form>
     </div>
   );

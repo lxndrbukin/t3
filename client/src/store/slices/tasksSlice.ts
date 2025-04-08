@@ -1,10 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { TaskProps } from './types';
-import { getAllTasks } from '../thunks/tasks';
+import { TaskProps, TasksProps } from './types';
+import { getAllTasks, getTask } from '../thunks/tasks';
 import { createTaskCategory } from '../thunks/taskCategories';
 
-const initialState: { list: TaskProps[]; categories: string[] } = {
+const initialState: TasksProps = {
   list: [],
+  currentTask: null,
   categories: [],
 };
 
@@ -21,6 +22,15 @@ const tasksSlice = createSlice({
       ) => {
         state.list = action.payload.tasks;
         state.categories = action.payload.categories;
+      }
+    );
+    builder.addCase(
+      getTask.fulfilled,
+      (
+        state: { currentTask: TaskProps | null },
+        action: PayloadAction<TaskProps>
+      ) => {
+        state.currentTask = action.payload;
       }
     );
     builder.addCase(
