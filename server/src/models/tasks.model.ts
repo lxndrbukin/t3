@@ -1,63 +1,36 @@
 import mongoose from 'mongoose';
 
-const tasksSchema = new mongoose.Schema({
-  userId: {
+const taskBoardSchema = new mongoose.Schema({
+  owner: {
     type: String,
     required: true,
   },
-  tasks: [
+  columns: [
     {
-      id: {
-        type: Number,
-        required: true,
-        unique: true,
-      },
-      title: {
-        type: String,
-        required: true,
-      },
-      description: {
-        type: String,
-        required: true,
-      },
-      category: {
-        type: String,
-        default: 'Uncategorized',
-      },
-      completed: {
-        type: Boolean,
-        default: false,
-      },
-      createdAt: {
-        type: Date,
-        default: Date.now,
-      },
-      dueDate: {
-        type: Date,
-        required: true,
-      },
+      _id: false,
+      name: { type: String, required: true },
+      order: { type: Number, required: true },
+      tasks: [
+        {
+          _id: false,
+          id: Number,
+          title: { type: String, required: true },
+          description: { type: String, default: '' },
+          category: { type: String },
+          completed: { type: Boolean, default: false },
+          createdAt: { type: Date, default: Date.now },
+          dueDate: { type: Date },
+        },
+      ],
     },
   ],
-  categories: [
-    {
-      id: {
-        type: Number,
-        required: true,
-        unique: true,
-      },
-      name: {
-        type: String,
-        required: true,
-      },
-      createdAt: {
-        type: Date,
-        default: Date.now,
-      },
-    },
-  ],
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
-export const TasksList = mongoose.model('TasksList', tasksSchema);
+export const TasksBoard = mongoose.model('TaskBoard', taskBoardSchema);
 
 export type TasksListType = mongoose.Document & {
   userId: string;
