@@ -1,9 +1,8 @@
 import mongoose from 'mongoose';
-import { join } from 'path';
 
 const userSchema = new mongoose.Schema({
   userId: {
-    type: String,
+    type: Number,
     required: true,
     unique: true,
   },
@@ -18,6 +17,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+  },
+  password: {
+    type: String,
   },
   joinDate: {
     type: Date,
