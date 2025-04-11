@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { TasksList } from '../../models/tasks.model';
+import { TasksBoard } from '../../models/tasks.model';
 
 import { ItemType, ErrorMessage } from './types';
 
@@ -8,26 +8,13 @@ const asyncHandler =
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 
-export const getList = async (req: Request, res: Response): Promise<void> => {
+export const createBoard = async (req: Request, res: Response) => {
   try {
-    const tasksList = await TasksList.findOne(
-      {
-        userId: (req.session as any).passport.user,
-      },
-      {
-        'tasks.id': 1,
-        'tasks.title': 1,
-        'tasks.description': 1,
-        'tasks.dueDate': 1,
-        'categories.id': 1,
-        'categories.name': 1,
-      }
-    ).select('-__v -_id -userId');
-    if (!tasksList) {
-      res.status(404).json({ message: ErrorMessage.TASKS_LIST_NOT_FOUND });
-    } else {
-      res.json(tasksList);
-    }
+    const tasksBoard = await TasksBoard.create({
+      userId: (req.session as any).passport.user,
+      tasks: [],
+    });
+    res.status(201).json(tasksBoard);
   } catch (error) {
     res.status(500).json({
       message:
@@ -36,21 +23,80 @@ export const getList = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export const getItem = async (req: Request, res: Response): Promise<void> => {
+export const getBoardsList = async (req: Request, res: Response) => {
   try {
-    const tasksList = await TasksList.findOne(
+    const tasksBoards = await TasksBoard.find(
       {
         userId: (req.session as any).passport.user,
-        tasks: { $elemMatch: { id: Number(req.params.id) } },
       },
-      {
-        'tasks.$': 1,
-      }
+      { boardName: 1, id: 1 }
     );
-    if (!tasksList) {
+    res.json(tasksBoards);
+  } catch (error) {
+    res.status(500).json({
+      message:
+        error instanceof Error ? error.message : ErrorMessage.UNKNOWN_ERROR,
+    });
+  }
+};
+
+export const getBoard = asyncHandler(async (req: Request, res: Response) => {
+  try {
+    const tasksBoard = await TasksBoard.findOne({
+      userId: (req.session as any).passport.user,
+    }).lean();
+
+    if (!tasksBoard) {
+      return res
+        .status(404)
+        .json({ message: ErrorMessage.TASKS_LIST_NOT_FOUND });
+    }
+
+    const filteredBoard = {
+      ...tasksBoard,
+      columns: tasksBoard.columns.map((col: any) => ({
+        name: col.name,
+        order: col.order,
+        tasks: col.tasks.map((task: any) => ({
+          id: task.id,
+          title: task.title,
+          completed: task.completed,
+          dueDate: task.dueDate,
+        })),
+      })),
+    };
+
+    res.json(filteredBoard);
+  } catch (error) {
+    res.status(500).json({
+      message:
+        error instanceof Error ? error.message : ErrorMessage.UNKNOWN_ERROR,
+    });
+  }
+});
+
+export const getItem = asyncHandler(async (req: Request, res: Response) => {
+  try {
+    const board = await TasksBoard.findOne({
+      userId: (req.session as any).passport.user,
+    }).lean();
+
+    if (!board) {
+      return res.status(404).json({ message: ErrorMessage.TASK_NOT_FOUND });
+    }
+
+    const taskId = Number(req.params.id);
+    let foundTask = null;
+
+    for (const column of board.columns) {
+      foundTask = column.tasks.find((task: any) => task.id === taskId);
+      if (foundTask) break;
+    }
+
+    if (!foundTask) {
       res.status(404).json({ message: ErrorMessage.TASK_NOT_FOUND });
     } else {
-      res.json(tasksList.tasks[0]);
+      res.json(foundTask);
     }
   } catch (error) {
     res.status(500).json({
@@ -58,125 +104,111 @@ export const getItem = async (req: Request, res: Response): Promise<void> => {
         error instanceof Error ? error.message : ErrorMessage.UNKNOWN_ERROR,
     });
   }
-};
+});
 
-export const createItem = async (req: Request, res: Response) => {
+export const createItem = asyncHandler(async (req: Request, res: Response) => {
   const userId = (req.session as any).passport?.user as string;
-  let tasksList = await TasksList.findOne({
-    userId,
-  });
-  switch (req.body.type as ItemType) {
-    case ItemType.TASK:
-      try {
-        if (!tasksList) {
-          tasksList = await TasksList.create({
-            userId: (req.session as any).passport.user as string,
+
+  try {
+    let board = await TasksBoard.findOne({ userId });
+
+    if (!board) {
+      board = await TasksBoard.create({
+        userId,
+        columns: [
+          {
+            name: 'To Do',
+            order: 0,
             tasks: [
               {
                 id: 1,
                 title: req.body.title,
                 description: req.body.description,
+                completed: false,
+                createdAt: new Date(),
                 dueDate: req.body.dueDate,
               },
             ],
-          });
-        } else {
-          tasksList = await TasksList.findOneAndUpdate(
-            { userId },
-            {
-              $push: { tasks: { id: tasksList.tasks.length + 1, ...req.body } },
-            }
-          );
-        }
-        res.status(201).json(tasksList);
-      } catch (error) {
-        res.status(500).json({
-          message:
-            error instanceof Error ? error.message : ErrorMessage.UNKNOWN_ERROR,
-        });
-      }
-      break;
-    case ItemType.CATEGORY:
-      try {
-        const userId = req.params.userId;
-        if (!tasksList) {
-          tasksList = await TasksList.create({
-            userId,
-            categories: [{ id: 1, name: req.body.category }],
-            tasks: [],
-          });
-        } else {
-          const categoryExists = tasksList.categories.find(
-            (category) => category.name === req.body.name
-          );
-          if (categoryExists) {
-            res
-              .status(400)
-              .json({ message: ErrorMessage.CATEGORY_ALREADY_EXISTS });
-            return;
-          }
-          tasksList = await TasksList.findOneAndUpdate(
-            { userId },
-            {
-              $push: {
-                categories: {
-                  id: (tasksList?.categories?.length || 0) + 1,
-                  name: req.body.category,
-                },
-              },
-            },
-            { new: true, runValidators: true }
-          );
-          res.json(tasksList);
-        }
-      } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: ErrorMessage.INTERNAL_SERVER_ERROR });
-      }
-      break;
+          },
+          { name: 'In Progress', order: 1, tasks: [] },
+          { name: 'Done', order: 2, tasks: [] },
+        ],
+      });
+
+      return res.status(201).json({ message: 'Task created', board });
+    }
+
+    const sortedColumns = [...board.columns].sort((a, b) => a.order - b.order);
+    const targetColumn = sortedColumns[0];
+
+    const allTasks = board.columns.flatMap((col) => col.tasks);
+    const maxId =
+      allTasks.length > 0 ? Math.max(...allTasks.map((task) => task.id)) : 0;
+
+    const newTask = {
+      id: maxId + 1,
+      title: req.body.title,
+      description: req.body.description,
+      completed: false,
+      createdAt: new Date(),
+      dueDate: req.body.dueDate,
+    };
+
+    targetColumn.tasks.push(newTask);
+    await board.save();
+
+    res.status(201).json({ message: 'Task created', task: newTask });
+  } catch (error) {
+    res.status(500).json({
+      message:
+        error instanceof Error ? error.message : ErrorMessage.UNKNOWN_ERROR,
+    });
   }
-};
+});
 
 export const updateItem = asyncHandler(
   async (req: Request<{ id: string }>, res: Response) => {
     const userId = (req.session as any).passport?.user as string;
-    let tasksList = await TasksList.findOne({
-      userId,
-    });
-    switch (req.body.type as ItemType) {
-      case ItemType.TASK:
-        if (!tasksList) {
-          return res
-            .status(404)
-            .json({ message: ErrorMessage.TASKS_LIST_NOT_FOUND });
+
+    try {
+      const board = await TasksBoard.findOne({ userId });
+
+      if (!board) {
+        return res
+          .status(404)
+          .json({ message: ErrorMessage.TASKS_LIST_NOT_FOUND });
+      }
+
+      const taskId = Number(req.params.id);
+      let updatedTask = null;
+
+      for (const column of board.columns) {
+        const task = column.tasks.find((t) => t.id === taskId);
+        if (task) {
+          Object.assign(task, {
+            title: req.body.title ?? task.title,
+            description: req.body.description ?? task.description,
+            dueDate: req.body.dueDate ?? task.dueDate,
+            completed: req.body.completed ?? task.completed,
+          });
+          updatedTask = task;
+          break;
         }
-        const taskIndex = tasksList.tasks.findIndex(
-          (task) => String(task.id) === req.params.id
-        );
-        if (taskIndex === -1) {
-          return res.status(404).json({ message: ErrorMessage.TASK_NOT_FOUND });
-        } else {
-          tasksList.tasks[taskIndex] = {
-            ...tasksList.tasks[taskIndex],
-            ...req.body,
-          };
-          await tasksList.save();
-          res.json(tasksList);
-        }
-        break;
-      case ItemType.CATEGORY:
-        tasksList = await TasksList.findOneAndUpdate(
-          { userId },
-          { $set: { [`categories.${req.params.id}`]: req.body } }
-        );
-        if (!tasksList) {
-          res
-            .status(404)
-            .json({ message: ErrorMessage.TASK_CATEGORIES_NOT_FOUND });
-        } else {
-          res.json(tasksList);
-        }
-        break;
+      }
+
+      if (!updatedTask) {
+        return res.status(404).json({ message: ErrorMessage.TASK_NOT_FOUND });
+      }
+
+      await board.save();
+      return res
+        .status(200)
+        .json({ message: 'Task updated', task: updatedTask });
+    } catch (error) {
+      res.status(500).json({
+        message:
+          error instanceof Error ? error.message : ErrorMessage.UNKNOWN_ERROR,
+      });
     }
   }
 );
@@ -184,38 +216,39 @@ export const updateItem = asyncHandler(
 export const deleteItem = asyncHandler(
   async (req: Request<{ id: string }>, res: Response) => {
     const userId = (req.session as any).passport?.user as string;
-    let tasksList = await TasksList.findOne({ userId });
-    switch (req.body.type as ItemType) {
-      case ItemType.TASK:
-        if (!tasksList) {
-          return res
-            .status(404)
-            .json({ message: ErrorMessage.TASKS_LIST_NOT_FOUND });
+
+    try {
+      const board = await TasksBoard.findOne({ userId });
+
+      if (!board) {
+        return res
+          .status(404)
+          .json({ message: ErrorMessage.TASKS_LIST_NOT_FOUND });
+      }
+
+      const taskId = Number(req.params.id);
+      let taskDeleted = false;
+
+      for (const column of board.columns) {
+        const index = column.tasks.findIndex((task) => task.id === taskId);
+        if (index !== -1) {
+          column.tasks.splice(index, 1);
+          taskDeleted = true;
+          break;
         }
-        const taskIndex = tasksList.tasks.findIndex(
-          (task) => String(task.id) === req.params.id
-        );
-        if (taskIndex === -1) {
-          return res.status(404).json({ message: ErrorMessage.TASK_NOT_FOUND });
-        } else {
-          tasksList.tasks.splice(taskIndex, 1);
-          await tasksList.save();
-          res.json(tasksList);
-        }
-        break;
-      case ItemType.CATEGORY:
-        tasksList = await TasksList.findOneAndUpdate(
-          { userId },
-          { $unset: { [`categories.${req.params.id}`]: '' } }
-        );
-        if (!tasksList) {
-          res
-            .status(404)
-            .json({ message: ErrorMessage.TASK_CATEGORIES_NOT_FOUND });
-        } else {
-          res.json(tasksList);
-        }
-        break;
+      }
+
+      if (!taskDeleted) {
+        return res.status(404).json({ message: ErrorMessage.TASK_NOT_FOUND });
+      }
+
+      await board.save();
+      return res.json({ message: 'Task deleted successfully' });
+    } catch (error) {
+      res.status(500).json({
+        message:
+          error instanceof Error ? error.message : ErrorMessage.UNKNOWN_ERROR,
+      });
     }
   }
 );

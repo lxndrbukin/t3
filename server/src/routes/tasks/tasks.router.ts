@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import {
-  getList,
+  getBoard,
   getItem,
   createItem,
   updateItem,
@@ -21,7 +21,7 @@ const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-tasksRouter.get('/:userId', isAuthenticated, getList);
+tasksRouter.get('/:userId', isAuthenticated, getBoard);
 tasksRouter.post('/:userId', isAuthenticated, createItem);
 tasksRouter.get('/:userId/:id', isAuthenticated, getItem);
 tasksRouter.put('/:userId/:id', isAuthenticated, updateItem);
