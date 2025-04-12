@@ -3,6 +3,7 @@ import App from '../App';
 import Auth from '../components/Auth/Auth';
 import Dashboard from '../components/Dashboard/Dashboard';
 import Tasks from '../components/Tasks/Tasks';
+import BoardsGrid from '../components/Boards/BoardsGrid';
 
 export const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ export const router = createBrowserRouter([
       {
         path: '/tasks',
         element: <Tasks />,
+      },
+      {
+        path: '/boards',
+        element: <BoardsGrid />,
       },
       {
         path: '/members',
