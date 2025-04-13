@@ -9,15 +9,57 @@
   .boards-grid {
     display: grid;
     gap: 8px;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 300px));
+    grid-auto-rows: min-content;
     width: 100%;
     height: 100%;
 
     .boards-grid-item {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
       height: 100%;
+      border: 1px solid $color-light-grey;
+      border-radius: 4px;
+      background-color: $color-white;
+      padding: 16px;
+      box-sizing: border-box;
+
+      .boards-grid-item-header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+
+        h3 {
+          margin: 0;
+          font-size: 20px;
+        }
+      }
+
+      .boards-grid-item-body {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin-bottom: 8px;
+
+        p {
+          margin: 0;
+          font-size: 16px;
+        }
+      }
+
+      .boards-grid-item-footer {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: center;
+
+        p {
+          margin: 0;
+          font-size: 14px;
+        }
+      }
     }
   }
 
