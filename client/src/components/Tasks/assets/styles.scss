@@ -99,7 +99,10 @@
 }
 
 .task-container {
+  width: calc(100vw - 128px);
+  height: calc(100vh - 128px);
   display: flex;
+  gap: 8px;
   padding: 8px;
   border: 2px solid $color-light-grey;
   border-radius: 4px;

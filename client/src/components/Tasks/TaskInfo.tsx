@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState, getTask } from '../../store';
 
+import { convertDate } from './assets/helpers';
+
 export default function TaskInfo({ taskId }: { taskId: number }) {
   const dispatch = useDispatch<AppDispatch>();
 
@@ -21,13 +23,13 @@ export default function TaskInfo({ taskId }: { taskId: number }) {
     <div className='task-container'>
       <div className='task-info'>
         <div className='task-info-header'>
-          <h1>Task Name</h1>
+          <h1>{currentTask?.title}</h1>
         </div>
         <div className='task-info-body'>
           <p>Description</p>
         </div>
         <div className='task-info-footer'>
-          <p>Due Date</p>
+          <p> {currentTask?.dueDate && convertDate(currentTask.dueDate)}</p>
         </div>
       </div>
       <div className='task-comments'>
