@@ -11,7 +11,7 @@ export default function SideNav() {
       return (
         <li key={name}>
           <Link to={href}>
-            <div className='nav-icon'></div>
+            <i className={icon ? icon : 'nav-icon'}></i>
             <span>{name}</span>
           </Link>
         </li>
