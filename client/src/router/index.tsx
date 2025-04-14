@@ -25,7 +25,11 @@ export const router = createBrowserRouter([
       },
       {
         path: '/boards',
-        element: <BoardsGrid />,
+        element: (
+          <Section header='Boards'>
+            <BoardsGrid />
+          </Section>
+        ),
       },
       {
         path: '/members',
