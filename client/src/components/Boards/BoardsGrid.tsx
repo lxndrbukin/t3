@@ -1,5 +1,5 @@
 import './assets/styles.scss';
-import { useState } from 'react';
+import { FunctionComponent, useState } from 'react';
 
 import { BoardsGridItemProps } from './types';
 
@@ -45,30 +45,6 @@ export default function BoardsGrid() {
       description: 'Description 6',
       createdAt: new Date(),
     },
-    {
-      id: 7,
-      name: 'Board 7',
-      description: 'Description 7',
-      createdAt: new Date(),
-    },
-    {
-      id: 8,
-      name: 'Board 8',
-      description: 'Description 8',
-      createdAt: new Date(),
-    },
-    {
-      id: 9,
-      name: 'Board 9',
-      description: 'Description 9',
-      createdAt: new Date(),
-    },
-    {
-      id: 10,
-      name: 'Board 10',
-      description: 'Description 10',
-      createdAt: new Date(),
-    },
   ];
 
   const [showCreateBoard, setShowCreateBoard] = useState<boolean>(false);
@@ -89,17 +65,26 @@ export default function BoardsGrid() {
       return renderCreateBoard();
     }
     return (
-      <div className='boards-grid'>
-        {boards.map((board: BoardsGridItemProps) => {
-          return <BoardsGridItem key={board.id} {...board} />;
-        })}
-      </div>
+      <>
+        {renderCreateBoard()}
+        <div className='boards-grid'>
+          {boards.map((board: BoardsGridItemProps) => {
+            return <BoardsGridItem key={board.id} {...board} />;
+          })}
+          <div
+            onClick={() => setShowCreateBoard(true)}
+            className='create-board'
+          >
+            <i className='fa-solid fa-plus'></i>
+            <p>Create Board</p>
+          </div>
+        </div>
+      </>
     );
   };
 
   return (
     <div className='boards-grid-container'>
-      <h1>Boards</h1>
       {renderBoards()}
       {showCreateBoard && (
         <Popup setIsVisible={setShowCreateBoard}>
