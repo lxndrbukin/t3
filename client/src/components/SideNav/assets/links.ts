@@ -9,5 +9,4 @@ export const navLinks: Array<NavLink> = [
 export const subNavLinks: Array<NavLink> = [
   { name: 'Settings', href: '/settings', icon: 'fa-solid fa-gear' },
   { name: 'Login', href: '/login', icon: 'fa-solid fa-right-to-bracket' },
-  { name: 'Logout', href: '/logout', icon: '' },
 ];

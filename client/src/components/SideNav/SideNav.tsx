@@ -21,7 +21,7 @@ export default function SideNav() {
 
   return (
     <div className='nav'>
-      <div className='nav-logo'>T3</div>
+      <div className='nav-logo'>Taskify</div>
       <div className='nav-menu-container'>
         <ul className='nav-menu'>{renderLinks(navLinks)}</ul>
         <ul className='nav-submenu'>{renderLinks(subNavLinks)}</ul>
