@@ -1,13 +1,13 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import {
-  getList,
+  getBoard,
   getItem,
   createItem,
   updateItem,
   deleteItem,
-} from './tasks.controller';
+} from './boards.controller';
 
-const tasksRouter: Router = Router();
+const boardsRouter: Router = Router();
 
 const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
   const { userId } = req.params;
@@ -21,10 +21,10 @@ const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-tasksRouter.get('/:userId', isAuthenticated, getList);
-tasksRouter.post('/:userId', isAuthenticated, createItem);
-tasksRouter.get('/:userId/:id', isAuthenticated, getItem);
-tasksRouter.put('/:userId/:id', isAuthenticated, updateItem);
-tasksRouter.delete('/:userId/:id', isAuthenticated, deleteItem);
+boardsRouter.get('/:userId', isAuthenticated, getBoard);
+boardsRouter.post('/:userId', isAuthenticated, createItem);
+boardsRouter.get('/:userId/:id', isAuthenticated, getItem);
+boardsRouter.put('/:userId/:id', isAuthenticated, updateItem);
+boardsRouter.delete('/:userId/:id', isAuthenticated, deleteItem);
 
-export default tasksRouter;
+export default boardsRouter;

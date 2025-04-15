@@ -1,13 +1,22 @@
 import mongoose from 'mongoose';
 
 const taskBoardSchema = new mongoose.Schema({
+  id: {
+    type: Number,
+    required: true,
+  },
   owner: {
+    type: Number,
+    required: true,
+  },
+  boardName: {
     type: String,
     required: true,
   },
   columns: [
     {
       _id: false,
+      id: Number,
       name: { type: String, required: true },
       order: { type: Number, required: true },
       tasks: [
