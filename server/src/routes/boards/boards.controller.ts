@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { TasksBoard } from '../../models/tasks.model';
+import { TasksBoard } from '../../models/board.model';
 
 import { ItemType, ErrorMessage } from './types';
 
