@@ -9,10 +9,33 @@ const asyncHandler =
   };
 
 export const createBoard = async (req: Request, res: Response) => {
+  const boardId = await TasksBoard.countDocuments({
+    owner: (req.session as any).passport.user,
+  });
   try {
     const tasksBoard = await TasksBoard.create({
-      userId: (req.session as any).passport.user,
-      tasks: [],
+      id: boardId + 1,
+      owner: (req.session as any).passport.user,
+      columns: [
+        {
+          id: 1,
+          name: 'To Do',
+          order: 1,
+          tasks: [],
+        },
+        {
+          id: 2,
+          name: 'In Progress',
+          order: 2,
+          tasks: [],
+        },
+        {
+          id: 3,
+          name: 'Done',
+          order: 3,
+          tasks: [],
+        },
+      ],
     });
     res.status(201).json(tasksBoard);
   } catch (error) {
@@ -27,7 +50,7 @@ export const getBoardsList = async (req: Request, res: Response) => {
   try {
     const tasksBoards = await TasksBoard.find(
       {
-        userId: (req.session as any).passport.user,
+        owner: (req.session as any).passport.user,
       },
       { boardName: 1, id: 1 }
     );
@@ -43,7 +66,7 @@ export const getBoardsList = async (req: Request, res: Response) => {
 export const getBoard = asyncHandler(async (req: Request, res: Response) => {
   try {
     const tasksBoard = await TasksBoard.findOne({
-      userId: (req.session as any).passport.user,
+      owner: (req.session as any).passport.user,
     }).lean();
 
     if (!tasksBoard) {
@@ -51,7 +74,6 @@ export const getBoard = asyncHandler(async (req: Request, res: Response) => {
         .status(404)
         .json({ message: ErrorMessage.TASKS_LIST_NOT_FOUND });
     }
-
     const filteredBoard = {
       ...tasksBoard,
       columns: tasksBoard.columns.map((col: any) => ({
