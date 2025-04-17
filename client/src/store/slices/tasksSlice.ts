@@ -1,7 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { BoardProps, BoardsProps } from './types';
-import { getAllTasks, getTask } from '../thunks/tasks';
-import { createTaskCategory } from '../thunks/taskCategories';
 
 const initialState: BoardsProps = {
   list: [],

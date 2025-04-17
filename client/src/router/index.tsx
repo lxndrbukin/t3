@@ -2,7 +2,6 @@ import { createBrowserRouter } from 'react-router-dom';
 import App from '../App';
 import Auth from '../components/Auth/Auth';
 import Dashboard from '../components/Dashboard/Dashboard';
-import Tasks from '../components/Tasks/Tasks';
 import BoardsGrid from '../components/Boards/BoardsGrid';
 import Section from '../assets/reusable/Section';
 
@@ -18,10 +17,6 @@ export const router = createBrowserRouter([
       {
         path: '/dashboard',
         element: <Dashboard />,
-      },
-      {
-        path: '/tasks',
-        element: <Tasks />,
       },
       {
         path: '/boards',

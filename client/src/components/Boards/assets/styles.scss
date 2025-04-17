@@ -176,6 +176,13 @@
         gap: 8px;
         align-items: center;
         justify-content: space-between;
+
+        .board-default-column-option {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          align-items: center;
+        }
       }
     }
 
