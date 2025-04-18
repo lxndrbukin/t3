@@ -164,24 +164,64 @@
       }
     }
 
-    .board-default-columns {
+    .board-custom-columns {
       display: flex;
       flex-direction: column;
       gap: 8px;
-      width: 100%;
+      max-width: 400px;
 
-      .board-default-column-options {
-        display: flex;
-        flex-direction: row;
+      .custom-columns-input {
+        display: grid;
+        grid-template-columns: 85% 15%;
         gap: 8px;
         align-items: center;
         justify-content: space-between;
 
-        .board-default-column-option {
+        input {
+          padding: 8px;
+          border: 1px solid $color-light-grey;
+          border-radius: 4px;
+          width: 100%;
+          box-sizing: border-box;
+          margin-bottom: 0;
+        }
+
+        button {
+          font-size: 16px;
           display: flex;
-          flex-direction: column;
-          gap: 8px;
           align-items: center;
+          justify-content: center;
+        }
+      }
+
+      .custom-columns-list {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        padding: 0;
+        list-style-type: none;
+
+        .custom-column {
+          background-color: $color-light-blue;
+          color: $color-white;
+          padding: 8px 16px;
+          border-radius: 4px;
+          cursor: pointer;
+          border: 1px solid $color-blue;
+          width: fit-content;
+          box-sizing: border-box;
+          text-decoration: none;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+
+          i {
+            font-size: 16px;
+            justify-self: flex-end;
+          }
         }
       }
     }
