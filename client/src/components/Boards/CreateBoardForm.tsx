@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { FormEvent, useState } from 'react';
 
 export default function CreateBoardForm() {
-  const defaultColumns = ['To Do', 'In Progress', 'Done'];
+  const [customColumn, setCustomColumn] = useState<string>('');
+  const [customColumns, setCustomColumns] = useState<string[]>([]);
   const visibilityOptions = ['Team', 'Private'];
 
   const [visibile, setVisibile] = useState(true);
@@ -14,6 +15,18 @@ export default function CreateBoardForm() {
     }
   };
 
+  const addCustomColumn = () => {
+    if (customColumn) {
+      setCustomColumns([...customColumns, customColumn]);
+      setCustomColumn('');
+    }
+    return;
+  };
+
+  const removeCustomColumn = (column: string) => {
+    setCustomColumns(customColumns.filter((c) => c !== column));
+  };
+
   const renderVisibilityOptions = () => {
     return visibilityOptions.map((option: string) => {
       return (
@@ -24,13 +37,20 @@ export default function CreateBoardForm() {
     });
   };
 
-  const renderDefaultColumns = () => {
-    return defaultColumns.map((column: string) => {
+  const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  };
+
+  const renderCustomColumnsList = () => {
+    return customColumns.map((column: string) => {
       return (
-        <label className='board-default-column-option' key={column}>
-          <input type='checkbox' name='columns' value={column} checked />
-          {column}
-        </label>
+        <li className='custom-column' key={column}>
+          {column}{' '}
+          <i
+            onClick={() => removeCustomColumn(column)}
+            className='fa-solid fa-xmark'
+          ></i>
+        </li>
       );
     });
   };
@@ -51,21 +71,28 @@ export default function CreateBoardForm() {
   return (
     <div className='create-board-form'>
       <h2>Create Board</h2>
-      <form>
+      <form onSubmit={(e) => handleFormSubmit(e)}>
         <div className='board-name'>
           <label>Board Name</label>
-          <input type='text' name='boardName' required />
+          <input type='text' name='boardName' />
         </div>
         <div className='board-description'>
           <label>Description</label>
           <textarea name='description'></textarea>
         </div>
-
-        <div className='board-default-columns'>
-          <label>Default Columns</label>
-          <div className='board-default-column-options'>
-            {renderDefaultColumns()}
+        <div className='board-custom-columns'>
+          <label>Board Columns</label>
+          <div className='custom-columns-input'>
+            <input
+              type='text'
+              onChange={(e) => setCustomColumn(e.target.value)}
+              name='columnsInput'
+            />
+            <button onClick={addCustomColumn}>
+              <i className='fa-solid fa-plus'></i>
+            </button>
           </div>
+          <ul className='custom-columns-list'>{renderCustomColumnsList()}</ul>
         </div>
         <div className='board-visibility'>
           <label>Visibility</label>
