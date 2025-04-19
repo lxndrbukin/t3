@@ -1,73 +1,116 @@
+import { FormEvent, useState } from 'react';
+
 export default function CreateBoardForm() {
+  const [customColumn, setCustomColumn] = useState<string>('');
+  const [customColumns, setCustomColumns] = useState<string[]>([]);
+  const visibilityOptions = ['Team', 'Private'];
+
+  const [visibile, setVisibile] = useState(true);
+
+  const toggleVisibility = (option: string) => {
+    if (option === 'Team') {
+      setVisibile(true);
+    } else {
+      setVisibile(false);
+    }
+  };
+
+  const addCustomColumn = () => {
+    if (customColumn) {
+      setCustomColumns([...customColumns, customColumn]);
+      setCustomColumn('');
+    }
+    return;
+  };
+
+  const removeCustomColumn = (column: string) => {
+    setCustomColumns(customColumns.filter((c) => c !== column));
+  };
+
+  const renderVisibilityOptions = () => {
+    return visibilityOptions.map((option: string) => {
+      return (
+        <option key={option} value={option}>
+          {option}
+        </option>
+      );
+    });
+  };
+
+  const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  };
+
+  const renderCustomColumnsList = () => {
+    return customColumns.map((column: string) => {
+      return (
+        <li className='custom-column' key={column}>
+          {column}{' '}
+          <i
+            onClick={() => removeCustomColumn(column)}
+            className='fa-solid fa-xmark'
+          ></i>
+        </li>
+      );
+    });
+  };
+
+  const renderTeamInvite = () => {
+    return (
+      <div className='board-members'>
+        <label>Invite Members</label>
+        <input
+          type='text'
+          name='members'
+          placeholder='Enter emails separated by commas'
+        />
+      </div>
+    );
+  };
+
   return (
     <div className='create-board-form'>
       <h2>Create Board</h2>
-      <form>
+      <form onSubmit={(e) => handleFormSubmit(e)}>
         <div className='board-name'>
           <label>Board Name</label>
-          <input type='text' name='boardName' required />
+          <input placeholder='Ex: My New Board' type='text' name='boardName' />
         </div>
-
-        <div className='board-type'>
-          <label>Board Type</label>
-          <div className='board-type-options'>
-            <label>
-              <input type='radio' name='boardType' value='kanban' checked />
-              Kanban
-            </label>
-            <label>
-              <input type='radio' name='boardType' value='scrum' />
-              Scrum
-            </label>
-          </div>
-        </div>
-
         <div className='board-description'>
           <label>Description</label>
-          <textarea name='description'></textarea>
+          <textarea
+            placeholder='Describe your board'
+            name='description'
+          ></textarea>
         </div>
-
-        <div className='board-default-columns'>
-          <label>Default Columns</label>
-          <div className='board-default-column-options'>
-            <label>
-              <input type='checkbox' name='columns' value='To Do' checked />
-              To Do
-            </label>
-            <label>
-              <input
-                type='checkbox'
-                name='columns'
-                value='In Progress'
-                checked
-              />
-              In Progress
-            </label>
-            <label>
-              <input type='checkbox' name='columns' value='Done' checked />
-              Done
-            </label>
+        <div className='board-custom-columns'>
+          <label>Board Columns</label>
+          <div className='custom-columns-input'>
+            <input
+              type='text'
+              value={customColumn}
+              placeholder='Enter column name'
+              onChange={(e) => setCustomColumn(e.target.value)}
+              name='columnsInput'
+            />
+            <button onClick={addCustomColumn}>
+              <i className='fa-solid fa-plus'></i>
+            </button>
           </div>
+          <ul className='custom-columns-list'>{renderCustomColumnsList()}</ul>
         </div>
-
-        <div className='board-members'>
-          <label>Invite Members</label>
-          <input
-            type='text'
-            name='members'
-            placeholder='Enter emails separated by commas'
-          />
-        </div>
-
         <div className='board-visibility'>
           <label>Visibility</label>
-          <select className='board-visibility-options' name='visibility'>
-            <option value='private'>Private</option>
-            <option value='team'>Team</option>
-            <option value='public'>Public</option>
+          <select
+            onChange={(e) => toggleVisibility(e.target.value)}
+            className='board-visibility-options'
+            name='visibility'
+          >
+            {renderVisibilityOptions()}
           </select>
         </div>
 
+        {visibile && renderTeamInvite()}
         <div>
           <button type='submit'>Create Board</button>
         </div>

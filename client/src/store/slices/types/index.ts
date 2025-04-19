@@ -44,7 +44,14 @@ export type BoardProps = {
   }[];
 };
 
+export type BoardListItemProps = {
+  id: number;
+  name: string;
+  description: string;
+  createdAt: string;
+};
+
 export type BoardsProps = {
-  list: string[];
+  list: BoardListItemProps[];
   currentBoard: BoardProps | null;
 };
