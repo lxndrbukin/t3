@@ -1,11 +1,16 @@
 import { FormEvent, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch, createBoard } from '../../store';
 
 export default function CreateBoardForm() {
+  const dispatch = useDispatch<AppDispatch>();
+
   const [customColumn, setCustomColumn] = useState<string>('');
   const [customColumns, setCustomColumns] = useState<string[]>([]);
+  const [visibile, setVisibile] = useState(true);
   const visibilityOptions = ['Team', 'Private'];
 
-  const [visibile, setVisibile] = useState(true);
+  const { user } = useSelector((state: RootState) => state.session);
 
   const toggleVisibility = (option: string) => {
     if (option === 'Team') {
@@ -39,6 +44,16 @@ export default function CreateBoardForm() {
 
   const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    dispatch(
+      createBoard({
+        userId: user?.userId,
+        data: {
+          boardName: e.currentTarget.boardName.value,
+          description: e.currentTarget.description.value,
+          columns: customColumns,
+        },
+      })
+    );
   };
 
   const renderCustomColumnsList = () => {
