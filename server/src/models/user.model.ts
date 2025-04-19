@@ -1,10 +1,13 @@
 import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
-  googleId: {
-    type: String,
+  userId: {
+    type: Number,
     required: true,
     unique: true,
+  },
+  googleId: {
+    type: String,
   },
   name: {
     type: String,
@@ -14,6 +17,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+  },
+  password: {
+    type: String,
+  },
+  joinDate: {
+    type: Date,
+    default: Date.now,
   },
 });
 

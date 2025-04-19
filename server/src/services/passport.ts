@@ -20,6 +20,7 @@ export default function passportConfig(config: {
           let user = await User.findOne({ googleId: profile.id });
           if (!user) {
             user = new User({
+              userId: (await User.countDocuments()) + 1,
               googleId: profile.id,
               name: profile.displayName,
               email: profile.emails?.[0]?.value,
