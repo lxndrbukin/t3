@@ -1,11 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import session from './slices/sessionSlice';
-import tasks from './slices/tasksSlice';
+import boards from './slices/boardsSlice';
 
 export const store = configureStore({
   reducer: {
     session,
-    tasks,
+    boards,
   },
 });
 
@@ -14,5 +14,4 @@ export type AppDispatch = typeof store.dispatch;
 
 export * from './thunks/currentSession';
 export * from './thunks/auth';
-export * from './thunks/tasks';
-export * from './thunks/taskCategories';
+export * from './thunks/boards';
