@@ -74,17 +74,22 @@ export default function CreateBoardForm() {
       <form onSubmit={(e) => handleFormSubmit(e)}>
         <div className='board-name'>
           <label>Board Name</label>
-          <input type='text' name='boardName' />
+          <input placeholder='Ex: My New Board' type='text' name='boardName' />
         </div>
         <div className='board-description'>
           <label>Description</label>
-          <textarea name='description'></textarea>
+          <textarea
+            placeholder='Describe your board'
+            name='description'
+          ></textarea>
         </div>
         <div className='board-custom-columns'>
           <label>Board Columns</label>
           <div className='custom-columns-input'>
             <input
               type='text'
+              value={customColumn}
+              placeholder='Enter column name'
               onChange={(e) => setCustomColumn(e.target.value)}
               name='columnsInput'
             />
