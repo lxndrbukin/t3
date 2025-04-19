@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { TasksBoard } from '../../models/board.model';
 
-import { ItemType, ErrorMessage } from './types';
+import { ErrorMessage } from './types';
+import { boardColumns } from './assets';
 
 const asyncHandler =
   (fn: any) => (req: Request, res: Response, next: NextFunction) => {
@@ -9,6 +10,7 @@ const asyncHandler =
   };
 
 export const createBoard = async (req: Request, res: Response) => {
+  const { boardName, boardDescription, columns } = req.body;
   const boardId = await TasksBoard.countDocuments({
     owner: (req.session as any).passport.user,
   });
@@ -16,26 +18,9 @@ export const createBoard = async (req: Request, res: Response) => {
     const tasksBoard = await TasksBoard.create({
       id: boardId + 1,
       owner: (req.session as any).passport.user,
-      columns: [
-        {
-          id: 1,
-          name: 'To Do',
-          order: 1,
-          tasks: [],
-        },
-        {
-          id: 2,
-          name: 'In Progress',
-          order: 2,
-          tasks: [],
-        },
-        {
-          id: 3,
-          name: 'Done',
-          order: 3,
-          tasks: [],
-        },
-      ],
+      boardName,
+      description: boardDescription,
+      columns: boardColumns(columns),
     });
     res.status(201).json(tasksBoard);
   } catch (error) {
@@ -68,7 +53,6 @@ export const getBoard = asyncHandler(async (req: Request, res: Response) => {
     const tasksBoard = await TasksBoard.findOne({
       owner: (req.session as any).passport.user,
     }).lean();
-
     if (!tasksBoard) {
       return res
         .status(404)
@@ -87,7 +71,6 @@ export const getBoard = asyncHandler(async (req: Request, res: Response) => {
         })),
       })),
     };
-
     res.json(filteredBoard);
   } catch (error) {
     res.status(500).json({

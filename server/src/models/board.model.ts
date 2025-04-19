@@ -14,6 +14,10 @@ const taskBoardSchema = new mongoose.Schema({
     required: true,
     default: 'New Board',
   },
+  description: {
+    type: String,
+    default: '',
+  },
   columns: [
     {
       _id: false,
