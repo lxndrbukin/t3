@@ -2,6 +2,7 @@ export type SessionProps = {
   isLoggedIn: boolean;
   user:
     | {
+        userId: number;
         googleId: string;
         name: string;
         email: string;
