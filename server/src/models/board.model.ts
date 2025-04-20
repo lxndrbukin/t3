@@ -12,6 +12,11 @@ const taskBoardSchema = new mongoose.Schema({
   boardName: {
     type: String,
     required: true,
+    default: 'New Board',
+  },
+  description: {
+    type: String,
+    default: '',
   },
   columns: [
     {
@@ -31,6 +36,16 @@ const taskBoardSchema = new mongoose.Schema({
           dueDate: { type: Date },
         },
       ],
+    },
+  ],
+  visibility: {
+    type: String,
+    enum: ['Team', 'Private'],
+  },
+  members: [
+    {
+      _id: false,
+      userId: Number,
     },
   ],
   createdAt: {

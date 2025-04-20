@@ -1,6 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import {
   getBoard,
+  createBoard,
   getItem,
   createItem,
   updateItem,
@@ -22,7 +23,8 @@ const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
 };
 
 boardsRouter.get('/:userId', isAuthenticated, getBoard);
-boardsRouter.post('/:userId', isAuthenticated, createItem);
+boardsRouter.post('/:userId', isAuthenticated, createBoard);
+// boardsRouter.post('/:userId', isAuthenticated, createItem);
 boardsRouter.get('/:userId/:id', isAuthenticated, getItem);
 boardsRouter.put('/:userId/:id', isAuthenticated, updateItem);
 boardsRouter.delete('/:userId/:id', isAuthenticated, deleteItem);

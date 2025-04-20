@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { TasksBoard } from '../../models/board.model';
 
-import { ItemType, ErrorMessage } from './types';
+import { ErrorMessage } from './types';
+import { boardColumns } from './assets';
 
 const asyncHandler =
   (fn: any) => (req: Request, res: Response, next: NextFunction) => {
@@ -9,10 +10,17 @@ const asyncHandler =
   };
 
 export const createBoard = async (req: Request, res: Response) => {
+  const { boardName, description, columns } = req.body;
+  const boardId = await TasksBoard.countDocuments({
+    owner: (req.session as any).passport.user,
+  });
   try {
     const tasksBoard = await TasksBoard.create({
-      userId: (req.session as any).passport.user,
-      tasks: [],
+      id: boardId + 1,
+      owner: (req.session as any).passport.user,
+      boardName,
+      description,
+      columns: boardColumns(columns),
     });
     res.status(201).json(tasksBoard);
   } catch (error) {
@@ -27,7 +35,7 @@ export const getBoardsList = async (req: Request, res: Response) => {
   try {
     const tasksBoards = await TasksBoard.find(
       {
-        userId: (req.session as any).passport.user,
+        owner: (req.session as any).passport.user,
       },
       { boardName: 1, id: 1 }
     );
@@ -43,15 +51,13 @@ export const getBoardsList = async (req: Request, res: Response) => {
 export const getBoard = asyncHandler(async (req: Request, res: Response) => {
   try {
     const tasksBoard = await TasksBoard.findOne({
-      userId: (req.session as any).passport.user,
+      owner: (req.session as any).passport.user,
     }).lean();
-
     if (!tasksBoard) {
       return res
         .status(404)
         .json({ message: ErrorMessage.TASKS_LIST_NOT_FOUND });
     }
-
     const filteredBoard = {
       ...tasksBoard,
       columns: tasksBoard.columns.map((col: any) => ({
@@ -65,7 +71,6 @@ export const getBoard = asyncHandler(async (req: Request, res: Response) => {
         })),
       })),
     };
-
     res.json(filteredBoard);
   } catch (error) {
     res.status(500).json({
