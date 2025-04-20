@@ -46,11 +46,12 @@ export default function CreateBoardForm() {
     e.preventDefault();
     dispatch(
       createBoard({
-        userId: user?.userId,
+        userId: user!.userId,
         data: {
           boardName: e.currentTarget.boardName.value,
           description: e.currentTarget.description.value,
           columns: customColumns,
+          visibility: e.currentTarget.visibility.value,
         },
       })
     );
