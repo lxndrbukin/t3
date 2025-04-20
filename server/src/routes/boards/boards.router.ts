@@ -14,7 +14,7 @@ const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
   const { userId } = req.params;
   if (
     (req.session as any).passport &&
-    (req.session as any).passport.user === userId
+    (req.session as any).passport.user === Number(userId)
   ) {
     return next();
   } else {
