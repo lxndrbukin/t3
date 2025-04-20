@@ -5,7 +5,7 @@ export const defaultColumns = [
 ];
 
 export const boardColumns = (customColumns: string[]) => {
-  if (!customColumns) {
+  if (customColumns.length === 0) {
     return defaultColumns;
   }
   return customColumns.map((column: string, index: number) => {

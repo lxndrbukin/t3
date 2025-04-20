@@ -10,7 +10,7 @@ const asyncHandler =
   };
 
 export const createBoard = async (req: Request, res: Response) => {
-  const { boardName, boardDescription, columns } = req.body;
+  const { boardName, description, columns } = req.body;
   const boardId = await TasksBoard.countDocuments({
     owner: (req.session as any).passport.user,
   });
@@ -19,7 +19,7 @@ export const createBoard = async (req: Request, res: Response) => {
       id: boardId + 1,
       owner: (req.session as any).passport.user,
       boardName,
-      description: boardDescription,
+      description,
       columns: boardColumns(columns),
     });
     res.status(201).json(tasksBoard);

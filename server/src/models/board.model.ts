@@ -38,6 +38,16 @@ const taskBoardSchema = new mongoose.Schema({
       ],
     },
   ],
+  visibility: {
+    type: String,
+    enum: ['Team', 'Private'],
+  },
+  members: [
+    {
+      _id: false,
+      userId: Number,
+    },
+  ],
   createdAt: {
     type: Date,
     default: Date.now,
