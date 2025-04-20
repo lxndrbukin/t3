@@ -46,7 +46,7 @@ export default function CreateBoardForm() {
     e.preventDefault();
     dispatch(
       createBoard({
-        userId: user?.userId,
+        userId: user!.userId,
         data: {
           boardName: e.currentTarget.boardName.value,
           description: e.currentTarget.description.value,
@@ -60,7 +60,7 @@ export default function CreateBoardForm() {
     return customColumns.map((column: string) => {
       return (
         <li className='custom-column' key={column}>
-          {column}{' '}
+          <span>{column}</span>
           <i
             onClick={() => removeCustomColumn(column)}
             className='fa-solid fa-xmark'
@@ -108,7 +108,7 @@ export default function CreateBoardForm() {
               onChange={(e) => setCustomColumn(e.target.value)}
               name='columnsInput'
             />
-            <button onClick={addCustomColumn}>
+            <button type='button' onClick={addCustomColumn}>
               <i className='fa-solid fa-plus'></i>
             </button>
           </div>
