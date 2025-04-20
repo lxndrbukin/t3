@@ -36,14 +36,12 @@ export default function passportConfig(config: {
   );
 
   passport.serializeUser((userData: any, done) => {
-    done(null, userData.googleId);
+    done(null, userData.userId);
   });
 
-  passport.deserializeUser(async (googleId: string, done) => {
+  passport.deserializeUser(async (userId: number, done) => {
     try {
-      const user = await User.findOne({ googleId: googleId }).select(
-        '-__v -_id'
-      );
+      const user = await User.findOne({ userId }).select('-__v -_id');
       done(null, user);
     } catch (err) {
       done(err, null);
