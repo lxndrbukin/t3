@@ -2,14 +2,14 @@ import { BoardListItemProps } from '../../store';
 
 export default function BoardsGridItem({
   id,
-  name,
+  boardName,
   description,
   createdAt,
 }: BoardListItemProps) {
   return (
     <div className='boards-grid-item'>
       <div className='boards-grid-item-header'>
-        <h3>{name}</h3>
+        <h3>{boardName}</h3>
       </div>
       <div className='boards-grid-item-body'>
         <p>{description}</p>
