@@ -21,6 +21,11 @@ export const createBoard = async (req: Request, res: Response) => {
       boardName,
       description,
       columns: boardColumns(columns),
+      members: [
+        {
+          userId: (req.session as any).passport.user,
+        },
+      ],
     });
     res.status(201).json(tasksBoard);
   } catch (error) {
