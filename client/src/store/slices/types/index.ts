@@ -47,7 +47,7 @@ export type BoardProps = {
 
 export type BoardListItemProps = {
   id: number;
-  name: string;
+  boardName: string;
   description: string;
   createdAt: string;
 };
