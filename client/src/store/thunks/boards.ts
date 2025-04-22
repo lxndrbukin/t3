@@ -20,7 +20,7 @@ export const createBoard = createAsyncThunk(
 
 export const getBoard = createAsyncThunk(
   'boards/getBoard',
-  async ({ userId, boardId }: { userId: number; boardId: string }) => {
+  async ({ userId, boardId }: { userId: number; boardId: number }) => {
     const response = await axios.get(`/v1/boards/${userId}/${boardId}`);
     return response.data;
   }

@@ -1,4 +1,5 @@
 import { BoardListItemProps } from '../../store';
+import { Link } from 'react-router-dom';
 
 export default function BoardsGridItem({
   id,
@@ -7,7 +8,7 @@ export default function BoardsGridItem({
   createdAt,
 }: BoardListItemProps) {
   return (
-    <div className='boards-grid-item'>
+    <Link to={`/boards/${id}`} className='boards-grid-item'>
       <div className='boards-grid-item-header'>
         <h3>{boardName}</h3>
       </div>
@@ -17,6 +18,6 @@ export default function BoardsGridItem({
       <div className='boards-grid-item-footer'>
         <p>{createdAt && new Date(createdAt).toDateString()}</p>
       </div>
-    </div>
+    </Link>
   );
 }
