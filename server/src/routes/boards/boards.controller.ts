@@ -39,6 +39,7 @@ export const getBoardsList = async (req: Request, res: Response) => {
       },
       { boardName: 1, id: 1 }
     );
+    console.log(tasksBoards);
     res.json(tasksBoards);
   } catch (error) {
     res.status(500).json({
