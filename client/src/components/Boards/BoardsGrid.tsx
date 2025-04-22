@@ -1,13 +1,28 @@
 import './assets/styles.scss';
-import { FunctionComponent, useState } from 'react';
-
-import { BoardsGridItemProps } from './types';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  AppDispatch,
+  RootState,
+  BoardListItemProps,
+  getBoardsList,
+} from '../../store';
 
 import Popup from '../../assets/reusable/Popup';
 import CreateBoardForm from './CreateBoardForm';
 import BoardsGridItem from './BoardsGridItem';
 
 export default function BoardsGrid() {
+  const dispatch = useDispatch<AppDispatch>();
+  const { list } = useSelector((state: RootState) => state.boards);
+  const { user } = useSelector((state: RootState) => state.session);
+
+  useEffect(() => {
+    if (user) {
+      dispatch(getBoardsList(user.userId));
+    }
+  }, [dispatch, user]);
+
   const boards: Array<any> = [
     {
       id: 1,
@@ -61,14 +76,14 @@ export default function BoardsGrid() {
   };
 
   const renderBoards = () => {
-    if (boards.length === 0) {
+    if (list.length === 0) {
       return renderCreateBoard();
     }
     return (
       <>
         {renderCreateBoard()}
         <div className='boards-grid'>
-          {boards.map((board: BoardsGridItemProps) => {
+          {list.map((board: BoardListItemProps) => {
             return <BoardsGridItem key={board.id} {...board} />;
           })}
           <div

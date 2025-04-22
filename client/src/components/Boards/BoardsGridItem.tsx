@@ -1,11 +1,11 @@
-import { BoardsGridItemProps } from './types';
+import { BoardListItemProps } from '../../store';
 
 export default function BoardsGridItem({
   id,
   name,
   description,
   createdAt,
-}: BoardsGridItemProps) {
+}: BoardListItemProps) {
   return (
     <div className='boards-grid-item'>
       <div className='boards-grid-item-header'>

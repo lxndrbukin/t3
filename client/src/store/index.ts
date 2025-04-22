@@ -15,3 +15,6 @@ export type AppDispatch = typeof store.dispatch;
 export * from './thunks/currentSession';
 export * from './thunks/auth';
 export * from './thunks/boards';
+
+export * from './slices/types';
+export * from './thunks/types';
