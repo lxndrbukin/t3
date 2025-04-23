@@ -85,6 +85,83 @@ export const getBoard = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
+export const deleteBoard = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    await TasksBoard.deleteOne({
+      owner: (req.session as any).passport.user,
+      id,
+    });
+    res.status(204).json();
+  } catch (error) {
+    res.status(500).json({
+      message:
+        error instanceof Error ? error.message : ErrorMessage.UNKNOWN_ERROR,
+    });
+  }
+};
+
+export const updateBoard = async (req: Request, res: Response) => {
+  const { boardName, description, columns } = req.body;
+  const { id } = req.params;
+  try {
+    await TasksBoard.updateOne(
+      {
+        owner: (req.session as any).passport.user,
+        id,
+      },
+      {
+        $set: {
+          boardName,
+          description,
+          columns: boardColumns(columns),
+        },
+      }
+    );
+    res.status(204).json();
+  } catch (error) {
+    res.status(500).json({
+      message:
+        error instanceof Error ? error.message : ErrorMessage.UNKNOWN_ERROR,
+    });
+  }
+};
+
+export const createTask = async (req: Request, res: Response) => {
+  const { columnId, title, dueDate } = req.body;
+  try {
+    await TasksBoard.updateOne(
+      {
+        owner: (req.session as any).passport.user,
+      },
+      {
+        $push: {
+          [`columns.$[columnIndex].tasks`]: {
+            $each: [
+              {
+                id: Date.now(),
+                title,
+                dueDate,
+                completed: false,
+              },
+            ],
+            $position: columnId,
+          },
+        },
+      },
+      {
+        arrayFilters: [{ columnIndex: { $eq: columnId } }],
+      }
+    );
+    res.status(204).json();
+  } catch (error) {
+    res.status(500).json({
+      message:
+        error instanceof Error ? error.message : ErrorMessage.UNKNOWN_ERROR,
+    });
+  }
+};
+
 export const getItem = asyncHandler(async (req: Request, res: Response) => {
   try {
     const board = await TasksBoard.findOne({
