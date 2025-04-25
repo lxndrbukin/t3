@@ -55,8 +55,10 @@ export const getBoardsList = async (req: Request, res: Response) => {
 
 export const getBoard = asyncHandler(async (req: Request, res: Response) => {
   try {
+    const { id } = req.params;
     const tasksBoard = await TasksBoard.findOne({
       owner: (req.session as any).passport.user,
+      id,
     }).lean();
     if (!tasksBoard) {
       return res
