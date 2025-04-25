@@ -3,6 +3,7 @@ import App from '../App';
 import Auth from '../components/Auth/Auth';
 import Dashboard from '../components/Dashboard/Dashboard';
 import BoardsGrid from '../components/Boards/BoardsGrid';
+import Board from '../components/Boards/Board';
 import Section from '../assets/reusable/Section';
 
 export const router = createBrowserRouter([
@@ -25,6 +26,10 @@ export const router = createBrowserRouter([
             <BoardsGrid />
           </Section>
         ),
+      },
+      {
+        path: '/boards/:id',
+        element: <Board />,
       },
       {
         path: '/members',
