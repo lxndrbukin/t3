@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import CreateBoardTaskForm from './CreateBoardTaskForm';
+import Popup from '../../assets/reusable/Popup';
 
 type BoardColumnProps = {
   id: number;
@@ -8,9 +10,26 @@ type BoardColumnProps = {
 
 export default function BoardColumn({ id, name, tasks }: BoardColumnProps) {
   const [showCreateTask, setShowCreateTask] = useState(false);
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
   const handleCreateTask = () => {
     setShowCreateTask(!showCreateTask);
+  };
+
+  const handleCreateTaskForm = () => {
+    setShowCreateForm(!showCreateForm);
+  };
+
+  const renderCreateTask = () => {
+    if (showCreateTask) {
+      return (
+        <div onClick={handleCreateTaskForm} className='board-create-task'>
+          <i className='fa-solid fa-plus'></i>
+          <p>Create Task</p>
+        </div>
+      );
+    }
+    return null;
   };
 
   const renderTasks = () => {
@@ -34,10 +53,7 @@ export default function BoardColumn({ id, name, tasks }: BoardColumnProps) {
               <i className='fa-solid fa-user'></i>
             </div>
           </div>
-          <div className='board-create-task'>
-            <i className='fa-solid fa-plus'></i>
-            <p>Create Task</p>
-          </div>
+          {renderCreateTask()}
         </div>
       );
     }
@@ -46,12 +62,17 @@ export default function BoardColumn({ id, name, tasks }: BoardColumnProps) {
 
   return (
     <div
-      onMouseOver={handleCreateTask}
-      onMouseOut={handleCreateTask}
+      onMouseEnter={handleCreateTask}
+      onMouseLeave={handleCreateTask}
       className='board-column'
     >
       <h3 className='board-column-header'>{name}</h3>
       <div className='board-column-tasks'>{renderTasks()}</div>
+      {showCreateForm && (
+        <Popup setIsVisible={setShowCreateForm}>
+          <CreateBoardTaskForm />
+        </Popup>
+      )}
     </div>
   );
 }

@@ -20,6 +20,7 @@ export type TaskProps = {
   id: number;
   title: string;
   description: string;
+  category: string;
   completed: boolean;
   createdAt: string;
   dueDate: string;
@@ -29,20 +30,13 @@ export type BoardProps = {
   id: number;
   owner: number;
   boardName: string;
-  columns: {
-    id: number;
-    name: string;
-    order: number;
-    tasks: {
-      id: number;
-      title: string;
-      description: string;
-      category: string;
-      completed: boolean;
-      createdAt: string;
-      dueDate: string;
-    }[];
-  }[];
+  columns: BoardColumnProps[];
+};
+
+export type BoardColumnProps = {
+  id: number;
+  name: string;
+  tasks: TaskProps[];
 };
 
 export type BoardListItemProps = {
