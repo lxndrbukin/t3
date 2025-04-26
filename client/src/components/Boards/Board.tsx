@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState, getBoard } from '../../store';
 import Section from '../../assets/reusable/Section';
-import BoardColumn from './BoardColumn';
+import BoardColumns from './BoardColumns';
 
 export default function Board() {
   const dispatch = useDispatch<AppDispatch>();
@@ -17,20 +17,10 @@ export default function Board() {
     }
   }, [dispatch, user]);
 
-  const renderColumns = () => {
-    if (currentBoard) {
-      const { columns } = currentBoard;
-      return columns.map((column) => (
-        <BoardColumn key={column.id} {...column} />
-      ));
-    }
-    return null;
-  };
-
   return (
     <Section header={currentBoard?.boardName!}>
       <div className='board'>
-        <div className='board-columns'>{renderColumns()}</div>
+        <BoardColumns columns={currentBoard?.columns!} />
       </div>
     </Section>
   );
