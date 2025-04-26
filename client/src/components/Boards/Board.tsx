@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState, BoardProps, getBoard } from '../../store';
+import { AppDispatch, RootState, getBoard } from '../../store';
 import Section from '../../assets/reusable/Section';
+import BoardColumn from './BoardColumn';
 
 export default function Board() {
   const dispatch = useDispatch<AppDispatch>();
@@ -20,17 +21,7 @@ export default function Board() {
     if (currentBoard) {
       const { columns } = currentBoard;
       return columns.map((column) => (
-        <div key={column.id} className='board-column'>
-          <h3>{column.name}</h3>
-          <div className='board-column-tasks'>
-            {column.tasks.map((task) => (
-              <div key={task.id} className='board-column-task'>
-                <h4>{task.title}</h4>
-                <p>{task.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+        <BoardColumn key={column.id} {...column} />
       ));
     }
     return null;
