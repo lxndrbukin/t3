@@ -287,7 +287,9 @@
       flex-direction: column;
       gap: 8px;
       width: 100%;
+      max-width: 300px;
       box-sizing: border-box;
+      border-radius: 4px;
       background-color: $color-light-grey;
       padding: 8px;
 
@@ -314,11 +316,35 @@
           gap: 8px;
           padding: 8px;
           background-color: $color-white;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12),
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04),
             0 1px 2px rgba(0, 0, 0, 0.24);
           border-radius: 4px;
           width: 100%;
           box-sizing: border-box;
+
+          .board-column-task-title {
+            margin: 0;
+            font-size: 16px;
+            font-weight: bold;
+          }
+
+          .board-column-task-description {
+            margin: 0;
+            font-size: 14px;
+          }
+
+          .board-column-task-owner {
+            display: flex;
+            flex-direction: row;
+            gap: 8px;
+            align-items: center;
+            justify-content: flex-end;
+
+            p {
+              margin: 0;
+              font-size: 12px;
+            }
+          }
         }
 
         .board-create-task {
@@ -340,7 +366,7 @@
 
           p {
             margin: 0;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
           }
         }

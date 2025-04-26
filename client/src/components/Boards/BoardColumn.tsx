@@ -19,13 +19,20 @@ export default function BoardColumn({ id, name, tasks }: BoardColumnProps) {
         <div className='board-column-tasks'>
           {tasks.map((task) => (
             <div key={task.id} className='board-column-task'>
-              <h4 className=''>{task.title}</h4>
-              <p>{task.description}</p>
+              <h4 className='board-column-task-title'>{task.title}</h4>
+              <p className='board-column-task-description'>
+                {task.description}
+              </p>
+              <div className='board-column-task-owner'></div>
             </div>
           ))}
           <div className='board-column-task'>
-            <h4>Task 1</h4>
-            <p>Description</p>
+            <h4 className='board-column-task-title'>Task 1</h4>
+            <p className='board-column-task-description'>Description</p>
+            <div className='board-column-task-owner'>
+              <p>Owner</p>
+              <i className='fa-solid fa-user'></i>
+            </div>
           </div>
           <div className='board-create-task'>
             <i className='fa-solid fa-plus'></i>
