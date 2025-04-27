@@ -25,3 +25,19 @@ export const getBoard = createAsyncThunk(
     return response.data;
   }
 );
+
+export const createColumn = createAsyncThunk(
+  'boards/createColumn',
+  async ({
+    userId,
+    boardId,
+    data,
+  }: {
+    userId: number;
+    boardId: number;
+    data: { columnName: string };
+  }) => {
+    const response = await axios.post(`/v1/boards/${userId}/${boardId}`, data);
+    return response.data;
+  }
+);

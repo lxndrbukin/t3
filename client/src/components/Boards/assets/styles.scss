@@ -282,6 +282,76 @@
     flex-direction: row;
     gap: 10px;
 
+    .board-create-column {
+      display: flex;
+      padding: 8px;
+      background-color: $color-light-grey;
+      border-radius: 4px;
+      width: fit-content;
+      height: fit-content;
+      box-sizing: border-box;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+
+      i {
+        font-size: 16px;
+      }
+    }
+
+    .board-create-column-form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      background-color: $color-white;
+      border-radius: 4px;
+      padding: 16px;
+      box-sizing: border-box;
+      min-width: 300px;
+
+      h2 {
+        margin-top: 0;
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      .form-input {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+
+        label {
+          margin: 0;
+          font-size: 14px;
+          font-weight: bold;
+        }
+
+        input {
+          margin-bottom: 8px;
+          padding: 8px;
+          border: 1px solid $color-light-grey;
+          border-radius: 4px;
+          width: 100%;
+          box-sizing: border-box;
+        }
+      }
+
+      button {
+        background-color: $color-blue;
+        color: $color-white;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        border: 1px solid $color-blue;
+        width: 100%;
+        box-sizing: border-box;
+      }
+    }
+
     .board-column {
       display: flex;
       flex-direction: column;
