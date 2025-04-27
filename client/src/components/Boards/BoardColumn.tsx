@@ -17,6 +17,7 @@ export default function BoardColumn({ id, name, tasks }: BoardColumnProps) {
   };
 
   const handleCreateTaskForm = () => {
+    setShowCreateTask(false);
     setShowCreateForm(!showCreateForm);
   };
 

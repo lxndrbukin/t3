@@ -1,6 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { BoardProps, BoardsProps, BoardListItemProps } from './types';
-import { getBoardsList, createBoard, getBoard } from '../thunks/boards';
+import {
+  getBoardsList,
+  createBoard,
+  getBoard,
+  createColumn,
+} from '../thunks/boards';
 
 const initialState: BoardsProps = {
   list: [],
@@ -26,6 +31,12 @@ const boardsSlice = createSlice({
     );
     builder.addCase(
       getBoard.fulfilled,
+      (state: BoardsProps, action: PayloadAction<BoardProps>) => {
+        state.currentBoard = action.payload;
+      }
+    );
+    builder.addCase(
+      createColumn.fulfilled,
       (state: BoardsProps, action: PayloadAction<BoardProps>) => {
         state.currentBoard = action.payload;
       }
