@@ -35,7 +35,7 @@ export const createColumn = createAsyncThunk(
   }: {
     userId: number;
     boardId: number;
-    data: BoardData;
+    data: { columnName: string };
   }) => {
     const response = await axios.post(`/v1/boards/${userId}/${boardId}`, data);
     return response.data;
