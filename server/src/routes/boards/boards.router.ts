@@ -1,5 +1,10 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { getBoardsList, getBoard, createBoard } from './boards.controller';
+import {
+  getBoardsList,
+  getBoard,
+  createBoard,
+  createColumn,
+} from './boards.controller';
 
 const boardsRouter: Router = Router();
 
@@ -18,5 +23,6 @@ const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
 boardsRouter.get('/:userId', isAuthenticated, getBoardsList);
 boardsRouter.get('/:userId/:id', isAuthenticated, getBoard);
 boardsRouter.post('/:userId', isAuthenticated, createBoard);
+boardsRouter.post('/:userId/:id', isAuthenticated, createColumn);
 
 export default boardsRouter;
