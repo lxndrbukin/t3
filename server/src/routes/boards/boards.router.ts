@@ -4,6 +4,7 @@ import {
   getBoard,
   createBoard,
   createColumn,
+  deleteColumn,
 } from './boards.controller';
 
 const boardsRouter: Router = Router();
@@ -21,8 +22,13 @@ const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
 };
 
 boardsRouter.get('/:userId', isAuthenticated, getBoardsList);
-boardsRouter.get('/:userId/:id', isAuthenticated, getBoard);
+boardsRouter.get('/:userId/:boardId', isAuthenticated, getBoard);
 boardsRouter.post('/:userId', isAuthenticated, createBoard);
-boardsRouter.post('/:userId/:id', isAuthenticated, createColumn);
+boardsRouter.post('/:userId/:boardId/columns', isAuthenticated, createColumn);
+boardsRouter.delete(
+  '/:userId/:boardId/columns/:columnId',
+  isAuthenticated,
+  deleteColumn
+);
 
 export default boardsRouter;

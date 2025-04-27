@@ -179,6 +179,39 @@ export const createColumn = asyncHandler(
   }
 );
 
+export const deleteColumn = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    await TasksBoard.updateOne(
+      { owner: (req.session as any).passport.user },
+      { $pull: { columns: { id } } }
+    );
+    res.status(204).json();
+  } catch (error) {
+    res.status(500).json({
+      message:
+        error instanceof Error ? error.message : ErrorMessage.UNKNOWN_ERROR,
+    });
+  }
+};
+
+export const updateColumn = async (req: Request, res: Response) => {
+  const { columnName, columnId } = req.body;
+  try {
+    await TasksBoard.updateOne(
+      { owner: (req.session as any).passport.user },
+      { $set: { [`columns.$[columnIndex].name`]: columnName } },
+      { arrayFilters: [{ columnIndex: { $eq: columnId } }] }
+    );
+    res.status(204).json();
+  } catch (error) {
+    res.status(500).json({
+      message:
+        error instanceof Error ? error.message : ErrorMessage.UNKNOWN_ERROR,
+    });
+  }
+};
+
 export const createTask = async (req: Request, res: Response) => {
   const { columnId, title, dueDate } = req.body;
   try {
