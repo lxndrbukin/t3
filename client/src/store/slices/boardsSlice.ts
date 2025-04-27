@@ -10,6 +10,7 @@ import {
   createBoard,
   getBoard,
   createColumn,
+  deleteColumn,
 } from '../thunks/boards';
 
 const initialState: BoardsProps = {
@@ -44,6 +45,14 @@ const boardsSlice = createSlice({
       createColumn.fulfilled,
       (state: BoardsProps, action: PayloadAction<BoardColumnProps>) => {
         state.currentBoard!.columns.push(action.payload);
+      }
+    );
+    builder.addCase(
+      deleteColumn.fulfilled,
+      (state: BoardsProps, action: PayloadAction<number>) => {
+        state.currentBoard!.columns = state.currentBoard!.columns.filter(
+          (column) => column.id !== action.payload
+        );
       }
     );
   },
