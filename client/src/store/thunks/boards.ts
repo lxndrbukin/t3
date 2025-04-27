@@ -37,7 +37,28 @@ export const createColumn = createAsyncThunk(
     boardId: number;
     data: { columnName: string };
   }) => {
-    const response = await axios.post(`/v1/boards/${userId}/${boardId}`, data);
+    const response = await axios.post(
+      `/v1/boards/${userId}/${boardId}/columns`,
+      data
+    );
+    return response.data;
+  }
+);
+
+export const deleteColumn = createAsyncThunk(
+  'boards/deleteColumn',
+  async ({
+    userId,
+    boardId,
+    columnId,
+  }: {
+    userId: number;
+    boardId: number;
+    columnId: number;
+  }) => {
+    const response = await axios.delete(
+      `/v1/boards/${userId}/${boardId}/columns/${columnId}`
+    );
     return response.data;
   }
 );
