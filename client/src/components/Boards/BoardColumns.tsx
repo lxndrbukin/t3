@@ -1,5 +1,11 @@
-import { useState } from 'react';
-import { BoardColumnProps } from '../../store';
+import { FormEvent, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  RootState,
+  BoardColumnProps,
+  AppDispatch,
+  createColumn,
+} from '../../store';
 import BoardColumn from './BoardColumn';
 import Popup from '../../assets/reusable/Popup';
 
@@ -8,8 +14,24 @@ export default function BoardColumns({
 }: {
   columns: BoardColumnProps[];
 }) {
+  const dispatch = useDispatch<AppDispatch>();
   const [showCreateColumnForm, setShowCreateColumnForm] =
     useState<boolean>(false);
+  const { user } = useSelector((state: RootState) => state.session);
+  const { currentBoard } = useSelector((state: RootState) => state.boards);
+
+  const handleCreateColumnForm = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const columnName = formData.get('columnName') as string;
+    dispatch(
+      createColumn({
+        userId: user!.userId,
+        boardId: currentBoard!.id,
+        data: { columnName },
+      })
+    );
+  };
 
   const handleCreateColumn = () => {
     setShowCreateColumnForm(!showCreateColumnForm);
@@ -26,10 +48,22 @@ export default function BoardColumns({
   const renderCreateColumnForm = () => {
     return (
       <Popup setIsVisible={setShowCreateColumnForm}>
-        <div className='board-create-column-form'>
-          <input placeholder='Column Name' />
+        <form
+          onSubmit={handleCreateColumnForm}
+          className='board-create-column-form'
+        >
+          <h2>Create Column</h2>
+          <div className='form-input'>
+            <label htmlFor='title'>Name</label>
+            <input
+              type='text'
+              placeholder='Column name'
+              id='name'
+              name='columnName'
+            />
+          </div>
           <button>Create</button>
-        </div>
+        </form>
       </Popup>
     );
   };
@@ -47,6 +81,7 @@ export default function BoardColumns({
     <div className='board-columns'>
       {renderColumns()}
       {renderCreateColumn()}
+      {showCreateColumnForm && renderCreateColumnForm()}
     </div>
   );
 }
