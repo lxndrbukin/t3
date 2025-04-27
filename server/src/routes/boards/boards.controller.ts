@@ -55,10 +55,10 @@ export const getBoardsList = async (req: Request, res: Response) => {
 
 export const getBoard = asyncHandler(async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const { boardId } = req.params;
     const tasksBoard = await TasksBoard.findOne({
       owner: (req.session as any).passport.user,
-      id,
+      id: boardId,
     }).lean();
     if (!tasksBoard) {
       return res
@@ -88,11 +88,11 @@ export const getBoard = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const deleteBoard = async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const { boardId } = req.params;
   try {
     await TasksBoard.deleteOne({
       owner: (req.session as any).passport.user,
-      id,
+      id: boardId,
     });
     res.status(204).json();
   } catch (error) {
@@ -105,12 +105,12 @@ export const deleteBoard = async (req: Request, res: Response) => {
 
 export const updateBoard = async (req: Request, res: Response) => {
   const { boardName, description, columns } = req.body;
-  const { id } = req.params;
+  const { boardId } = req.params;
   try {
     await TasksBoard.updateOne(
       {
         owner: (req.session as any).passport.user,
-        id,
+        id: boardId,
       },
       {
         $set: {
@@ -132,28 +132,26 @@ export const updateBoard = async (req: Request, res: Response) => {
 export const createColumn = asyncHandler(
   async (req: Request, res: Response) => {
     const { columnName } = req.body;
-    const { id } = req.params;
-
+    const { boardId } = req.params;
     try {
       const currentBoard = await TasksBoard.findOne({
         owner: (req.session as any).passport.user,
-        id,
+        id: boardId,
       }).lean();
-
+      const columnOrder = currentBoard!.columns.length;
       if (!currentBoard) {
         return res.status(404).json({ message: 'Board not found' });
       }
-
       const updatedBoard = await TasksBoard.findOneAndUpdate(
         {
           owner: (req.session as any).passport.user,
-          id,
+          id: boardId,
         },
         {
           $push: {
             columns: {
               name: columnName,
-              order: currentBoard.columns.length,
+              order: columnOrder,
               tasks: [],
             },
           },
@@ -180,11 +178,11 @@ export const createColumn = asyncHandler(
 );
 
 export const deleteColumn = async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const { columnId } = req.params;
   try {
     await TasksBoard.updateOne(
       { owner: (req.session as any).passport.user },
-      { $pull: { columns: { id } } }
+      { $pull: { columns: { id: columnId } } }
     );
     res.status(204).json();
   } catch (error) {
@@ -214,6 +212,12 @@ export const updateColumn = async (req: Request, res: Response) => {
 
 export const createTask = async (req: Request, res: Response) => {
   const { columnId, title, dueDate } = req.body;
+  const { boardId } = req.params;
+  const currentBoard = await TasksBoard.findOne({
+    owner: (req.session as any).passport.user,
+    id: boardId,
+  });
+  const taskId = currentBoard!.columns[columnId].tasks.length + 1;
   try {
     await TasksBoard.updateOne(
       {
@@ -224,7 +228,7 @@ export const createTask = async (req: Request, res: Response) => {
           [`columns.$[columnIndex].tasks`]: {
             $each: [
               {
-                id: Date.now(),
+                id: taskId,
                 title,
                 dueDate,
                 completed: false,
