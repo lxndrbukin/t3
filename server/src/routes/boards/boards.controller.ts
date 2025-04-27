@@ -129,6 +129,56 @@ export const updateBoard = async (req: Request, res: Response) => {
   }
 };
 
+export const createColumn = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { columnName } = req.body;
+    const { id } = req.params;
+
+    try {
+      const currentBoard = await TasksBoard.findOne({
+        owner: (req.session as any).passport.user,
+        id,
+      }).lean();
+
+      if (!currentBoard) {
+        return res.status(404).json({ message: 'Board not found' });
+      }
+
+      const updatedBoard = await TasksBoard.findOneAndUpdate(
+        {
+          owner: (req.session as any).passport.user,
+          id,
+        },
+        {
+          $push: {
+            columns: {
+              name: columnName,
+              order: currentBoard.columns.length,
+              tasks: [],
+            },
+          },
+        },
+        { new: true, lean: true }
+      );
+
+      if (!updatedBoard) {
+        return res
+          .status(404)
+          .json({ message: 'Board not found after update' });
+      }
+
+      res
+        .status(201)
+        .json(updatedBoard.columns[updatedBoard.columns.length - 1]);
+    } catch (error) {
+      res.status(500).json({
+        message:
+          error instanceof Error ? error.message : 'Unknown error occurred',
+      });
+    }
+  }
+);
+
 export const createTask = async (req: Request, res: Response) => {
   const { columnId, title, dueDate } = req.body;
   try {
