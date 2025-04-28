@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { FormEvent,useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   RootState,
@@ -6,11 +6,12 @@ import {
   BoardProps,
   BoardListItemProps,
   getBoardsList,
+  createTask,
 } from '../../store';
 
 type CreateBoardTaskFormProps = {
   boards?: BoardListItemProps[];
-  currentColumn?: string;
+  currentColumn?: { id: number; name: string };
   currentBoard?: BoardProps;
 };
 
@@ -28,13 +29,28 @@ export default function CreateBoardTaskForm({
     }
   }, [boards?.length]);
 
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const taskData = {
+      title: e.currentTarget.taskTitle.value,
+      description: e.currentTarget.description.value,
+      dueDate: new Date(e.currentTarget.dueDate.value),
+    };
+    dispatch(createTask({
+      userId: user?.userId!,
+      boardId: currentBoard?.id!,
+      columnId: currentColumn?.id!,
+      data: taskData,
+    }));
+  };
+
   const renderColumnSelectOptions = () => {
     if (currentBoard) {
       return currentBoard.columns.map((column) => (
         <option
           key={column.id}
           value={column.name}
-          selected={column.name === currentColumn}
+          selected={column.name === currentColumn?.name}
         >
           {column.name}
         </option>
@@ -61,7 +77,7 @@ export default function CreateBoardTaskForm({
   return (
     <div className='create-board-task-form'>
       <h2>Create Task</h2>
-      <form>
+      <form onSubmit={(e)=> handleSubmit(e)}>
         <div className='form-select'>
           <label htmlFor='board'>Board</label>
           <select
@@ -79,12 +95,12 @@ export default function CreateBoardTaskForm({
           </select>
         </div>
         <div className='form-input'>
-          <label htmlFor='title'>Title</label>
+          <label htmlFor='taskTitle'>Title</label>
           <input
             type='text'
             placeholder='Short summary'
-            id='title'
-            name='title'
+            id='taskTitle'
+            name='taskTitle'
           />
         </div>
         <div className='form-textarea'>
@@ -96,6 +112,10 @@ export default function CreateBoardTaskForm({
             rows={10}
             placeholder='Describe the task'
           ></textarea>
+        </div>
+        <div className='form-input'>
+          <label htmlFor='dueDate'>Due</label>
+          <input type='datetime-local' name='dueDate' id='dueDate' />
         </div>
         <button type='submit'>Create Task</button>
       </form>
