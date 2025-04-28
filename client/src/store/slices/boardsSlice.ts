@@ -4,6 +4,7 @@ import {
   BoardsProps,
   BoardColumnProps,
   BoardListItemProps,
+  TaskProps,
 } from './types';
 import {
   getBoardsList,
@@ -11,6 +12,7 @@ import {
   getBoard,
   createColumn,
   deleteColumn,
+  createTask,
 } from '../thunks/boards';
 
 const initialState: BoardsProps = {
@@ -53,6 +55,14 @@ const boardsSlice = createSlice({
         state.currentBoard!.columns = state.currentBoard!.columns.filter(
           (column) => column.id !== action.payload
         );
+      }
+    );
+    builder.addCase(
+      createTask.fulfilled,
+      (state: BoardsProps, action: PayloadAction<TaskProps>) => {
+        state.currentBoard!.columns.find(
+          (column) => column.id === action.payload.columnId
+        )!.tasks.push(action.payload);
       }
     );
   },

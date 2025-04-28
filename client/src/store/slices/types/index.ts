@@ -22,8 +22,9 @@ export type TaskProps = {
   description: string;
   category: string;
   completed: boolean;
-  createdAt: string;
-  dueDate: string;
+  createdAt: Date;
+  dueDate: Date;
+  columnId?: number;
 };
 
 export type BoardProps = {
@@ -43,10 +44,11 @@ export type BoardListItemProps = {
   id: number;
   boardName: string;
   description: string;
-  createdAt: string;
+  createdAt: Date;
 };
 
 export type BoardsProps = {
   list: BoardListItemProps[];
   currentBoard: BoardProps | null;
 };
+

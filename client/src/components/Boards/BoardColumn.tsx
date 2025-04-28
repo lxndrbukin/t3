@@ -80,7 +80,7 @@ export default function BoardColumn({ id, name, tasks }: BoardColumnProps) {
         <Popup setIsVisible={setShowCreateForm}>
           <CreateBoardTaskForm
             boards={list!}
-            currentColumn={name}
+            currentColumn={{id, name}}
             currentBoard={currentBoard!}
           />
         </Popup>

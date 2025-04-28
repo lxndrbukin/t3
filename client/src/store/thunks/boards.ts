@@ -62,3 +62,25 @@ export const deleteColumn = createAsyncThunk(
     return response.data;
   }
 );
+
+export const createTask = createAsyncThunk(
+  'boards/createTask',
+  async ({
+    userId,
+    boardId,
+    columnId,
+    data,
+  }: {
+    userId: number;
+    boardId: number;
+    columnId: number;
+    data: { title: string; description: string; dueDate: Date };
+  }) => {
+    const response = await axios.post(
+      `/v1/boards/${userId}/${boardId}/columns/${columnId}/tasks`,
+      data
+    );
+    return response.data;
+  }
+);
+  
