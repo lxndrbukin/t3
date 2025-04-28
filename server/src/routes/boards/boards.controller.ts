@@ -210,14 +210,24 @@ export const updateColumn = async (req: Request, res: Response) => {
   }
 };
 
-export const createTask = async (req: Request, res: Response) => {
+export const createTask = asyncHandler(async (req: Request, res: Response) => {
   const { columnId, title, dueDate } = req.body;
   const { boardId } = req.params;
   let currentBoard = await TasksBoard.findOne({
     owner: (req.session as any).passport.user,
     id: boardId,
   });
-  const taskId = currentBoard!.columns[columnId].tasks.length + 1;
+
+  if (!currentBoard) {
+    return res.status(404).json({ message: 'Board not found' });
+  }
+
+  if (!currentBoard.columns[columnId]) {
+    return res.status(404).json({ message: 'Column not found' });
+  }
+
+
+  const taskId = currentBoard.columns[columnId].tasks.length + 1;
   try {
     currentBoard = await TasksBoard.findOneAndUpdate(
       {
@@ -243,14 +253,14 @@ export const createTask = async (req: Request, res: Response) => {
         arrayFilters: [{ columnIndex: { $eq: columnId } }],
       }
     );
-    res.status(204).json(currentBoard!.columns[columnId].tasks[taskId - 1]);
+    res.status(204).json({...currentBoard!.columns[columnId].tasks[taskId - 1], columnId});
   } catch (error) {
     res.status(500).json({
       message:
         error instanceof Error ? error.message : ErrorMessage.UNKNOWN_ERROR,
     });
   }
-};
+})
 
 export const getItem = asyncHandler(async (req: Request, res: Response) => {
   try {
