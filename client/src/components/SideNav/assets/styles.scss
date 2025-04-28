@@ -4,8 +4,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  max-width: 250px;
-  min-width: 200px;
+  width: 100px;
   background-color: $color-light-grey;
   height: 100%;
 
@@ -13,7 +12,7 @@
     font-weight: bold;
     padding: 8px;
     color: $color-dark-blue;
-    font-size: 32px;
+    font-size: 52px;
     user-select: none;
     align-self: center;
   }
@@ -33,13 +32,16 @@
       width: 100%;
       box-sizing: border-box;
       align-self: flex-start;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
 
       li {
         padding: 8px;
         display: flex;
-        flex-direction: row;
-        width: 100%;
         box-sizing: border-box;
+        width: fit-content;
 
         &:hover {
           background-color: $color-light-grey;
@@ -49,14 +51,11 @@
         a {
           text-decoration: none;
           color: $color-black;
-          display: grid;
-          grid-template-columns: 24px 1fr;
-          gap: 8px;
           align-items: center;
-          width: 100%;
+          justify-content: center;
 
           i {
-            font-size: 20px;
+            font-size: 28px;
             color: $color-dark-blue;
           }
 
@@ -76,16 +75,19 @@
       padding: 0;
       margin: 0;
       padding: 6px;
-
       width: 100%;
       box-sizing: border-box;
+      align-self: flex-start;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
 
       li {
         padding: 8px;
         display: flex;
-        flex-direction: row;
-        width: 100%;
         box-sizing: border-box;
+        width: fit-content;
 
         &:hover {
           background-color: $color-light-grey;
@@ -97,12 +99,12 @@
           color: $color-black;
           display: grid;
           grid-template-columns: 24px 1fr;
-          gap: 8px;
           align-items: center;
-          width: 100%;
+          justify-content: center;
+          width: fit-content;
 
           i {
-            font-size: 20px;
+            font-size: 25px;
             color: $color-dark-blue;
           }
 
