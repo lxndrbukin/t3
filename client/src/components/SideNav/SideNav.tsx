@@ -1,8 +1,6 @@
 import './assets/styles.scss';
 import { Link } from 'react-router-dom';
-
 import { NavLink } from './types';
-
 import { navLinks, subNavLinks } from './assets/links';
 
 export default function SideNav() {
@@ -10,9 +8,8 @@ export default function SideNav() {
     return links.map(({ name, href, icon }: NavLink) => {
       return (
         <li key={name}>
-          <Link to={href}>
+          <Link title={name} to={href}>
             <i className={icon ? icon : 'nav-icon'}></i>
-            <span>{name}</span>
           </Link>
         </li>
       );
@@ -21,7 +18,9 @@ export default function SideNav() {
 
   return (
     <div className='nav'>
-      <div className='nav-logo'>Taskify</div>
+      <Link to='/' className='nav-logo'>
+        <i title='Taskify' className='fa-solid fa-check-double'></i>
+      </Link>
       <div className='nav-menu-container'>
         <ul className='nav-menu'>{renderLinks(navLinks)}</ul>
         <ul className='nav-submenu'>{renderLinks(subNavLinks)}</ul>
