@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
 import CreateBoardTaskForm from './CreateBoardTaskForm';
 import Popup from '../../assets/reusable/Popup';
 
@@ -9,6 +11,11 @@ type BoardColumnProps = {
 };
 
 export default function BoardColumn({ id, name, tasks }: BoardColumnProps) {
+  const { user } = useSelector((state: RootState) => state.session);
+  const { currentBoard, list } = useSelector(
+    (state: RootState) => state.boards
+  );
+
   const [showCreateTask, setShowCreateTask] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
 
@@ -71,7 +78,11 @@ export default function BoardColumn({ id, name, tasks }: BoardColumnProps) {
       <div className='board-column-tasks'>{renderTasks()}</div>
       {showCreateForm && (
         <Popup setIsVisible={setShowCreateForm}>
-          <CreateBoardTaskForm />
+          <CreateBoardTaskForm
+            boards={list!}
+            currentColumn={name}
+            currentBoard={currentBoard!}
+          />
         </Popup>
       )}
     </div>
