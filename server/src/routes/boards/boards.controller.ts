@@ -213,15 +213,16 @@ export const updateColumn = async (req: Request, res: Response) => {
 export const createTask = async (req: Request, res: Response) => {
   const { columnId, title, dueDate } = req.body;
   const { boardId } = req.params;
-  const currentBoard = await TasksBoard.findOne({
+  let currentBoard = await TasksBoard.findOne({
     owner: (req.session as any).passport.user,
     id: boardId,
   });
   const taskId = currentBoard!.columns[columnId].tasks.length + 1;
   try {
-    await TasksBoard.updateOne(
+    currentBoard = await TasksBoard.findOneAndUpdate(
       {
         owner: (req.session as any).passport.user,
+        id: boardId,
       },
       {
         $push: {
@@ -242,7 +243,7 @@ export const createTask = async (req: Request, res: Response) => {
         arrayFilters: [{ columnIndex: { $eq: columnId } }],
       }
     );
-    res.status(204).json();
+    res.status(204).json(currentBoard!.columns[columnId].tasks[taskId - 1]);
   } catch (error) {
     res.status(500).json({
       message:
