@@ -10,7 +10,7 @@ const asyncHandler =
   };
 
 export const createBoard = async (req: Request, res: Response) => {
-  const { boardName, description, columns } = req.body;
+  const { boardName, description, columns, key } = req.body;
   const boardId = await TasksBoard.countDocuments({
     owner: (req.session as any).passport.user,
   });
@@ -19,6 +19,7 @@ export const createBoard = async (req: Request, res: Response) => {
       id: boardId + 1,
       owner: (req.session as any).passport.user,
       boardName,
+      key,
       description,
       columns: boardColumns(columns),
       members: [
@@ -68,11 +69,13 @@ export const getBoard = asyncHandler(async (req: Request, res: Response) => {
     const filteredBoard = {
       ...tasksBoard,
       columns: tasksBoard.columns.map((col: any) => ({
+        id: col.id,
         name: col.name,
         order: col.order,
         tasks: col.tasks.map((task: any) => ({
           id: task.id,
           title: task.title,
+          description: task.description,
           completed: task.completed,
           dueDate: task.dueDate,
         })),
@@ -150,6 +153,7 @@ export const createColumn = asyncHandler(
         {
           $push: {
             columns: {
+              id: columnOrder + 1,
               name: columnName,
               order: columnOrder,
               tasks: [],
@@ -211,49 +215,33 @@ export const updateColumn = async (req: Request, res: Response) => {
 };
 
 export const createTask = asyncHandler(async (req: Request, res: Response) => {
-  const { columnId, title, dueDate } = req.body;
-  const { boardId } = req.params;
+  const { title, dueDate, description } = req.body;
+  const boardId = Number(req.params.boardId);
+  const columnId = Number(req.params.columnId);
   let currentBoard = await TasksBoard.findOne({
     owner: (req.session as any).passport.user,
     id: boardId,
   });
-
   if (!currentBoard) {
-    return res.status(404).json({ message: 'Board not found' });
+    return res.status(404).json({ message: ErrorMessage.BOARD_NOT_FOUND });
   }
-
-  if (!currentBoard.columns[columnId]) {
-    return res.status(404).json({ message: 'Column not found' });
+  if (!currentBoard.columns[columnId - 1]) {
+    return res.status(404).json({ message: ErrorMessage.COLUMN_NOT_FOUND });
   }
-
-
-  const taskId = currentBoard.columns[columnId].tasks.length + 1;
+  const taskId = currentBoard.columns[columnId - 1].tasks.length + 1;
   try {
-    currentBoard = await TasksBoard.findOneAndUpdate(
-      {
-        owner: (req.session as any).passport.user,
-        id: boardId,
-      },
-      {
-        $push: {
-          [`columns.$[columnIndex].tasks`]: {
-            $each: [
-              {
-                id: taskId,
-                title,
-                dueDate,
-                completed: false,
-              },
-            ],
-            $position: columnId,
-          },
-        },
-      },
-      {
-        arrayFilters: [{ columnIndex: { $eq: columnId } }],
-      }
-    );
-    res.status(204).json({...currentBoard!.columns[columnId].tasks[taskId - 1], columnId});
+    currentBoard.columns[columnId - 1].tasks.push({
+      id: taskId,
+      title,
+      description,
+      dueDate,
+      completed: false,
+    });
+    await currentBoard.save();
+    res.status(204).json({
+      ...currentBoard.columns[columnId - 1].tasks[taskId - 1],
+      columnId,
+    });
   } catch (error) {
     res.status(500).json({
       message:
