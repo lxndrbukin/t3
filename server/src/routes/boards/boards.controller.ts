@@ -75,6 +75,9 @@ export const getBoard = asyncHandler(async (req: Request, res: Response) => {
         tasks: col.tasks.map((task: any) => ({
           id: task.id,
           title: task.title,
+          key: task.key,
+          owner: task.owner,
+          assignedTo: task.assignedTo,
           description: task.description,
           completed: task.completed,
           dueDate: task.dueDate,
@@ -234,6 +237,7 @@ export const createTask = asyncHandler(async (req: Request, res: Response) => {
       id: taskId,
       title,
       key: `${currentBoard.key.toUpperCase()}-${taskId}`,
+      owner: (req.session as any).passport.user,
       description,
       dueDate,
       completed: false,
