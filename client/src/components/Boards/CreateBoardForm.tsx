@@ -50,6 +50,7 @@ export default function CreateBoardForm() {
         data: {
           boardName: e.currentTarget.boardName.value,
           description: e.currentTarget.description.value,
+          key: e.currentTarget.key.value,
           columns: customColumns,
           visibility: e.currentTarget.visibility.value,
         },
@@ -91,6 +92,10 @@ export default function CreateBoardForm() {
         <div className='board-name'>
           <label>Board Name</label>
           <input placeholder='Ex: My New Board' type='text' name='boardName' />
+        </div>
+        <div className='board-key'>
+          <label>Board Key</label>
+          <input placeholder='Ex: PROJ' type='text' name='key' />
         </div>
         <div className='board-description'>
           <label>Description</label>
