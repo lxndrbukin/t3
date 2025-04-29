@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
+import mongoose from "mongoose";
+import { v4 as uuidv4 } from "uuid";
 
 const taskBoardSchema = new mongoose.Schema({
   id: {
@@ -17,11 +17,11 @@ const taskBoardSchema = new mongoose.Schema({
   boardName: {
     type: String,
     required: true,
-    default: 'New Board',
+    default: "New Board",
   },
   description: {
     type: String,
-    default: '',
+    default: "",
   },
   columns: [
     {
@@ -34,8 +34,11 @@ const taskBoardSchema = new mongoose.Schema({
           _id: false,
           id: Number,
           title: { type: String, required: true },
-          description: { type: String, default: '' },
+          description: { type: String, default: "" },
+          key: { type: String },
           category: { type: String },
+          owner: { userId: Number },
+          assignedTo: { userId: Number },
           completed: { type: Boolean, default: false },
           createdAt: { type: Date, default: Date.now },
           dueDate: { type: Date },
@@ -45,7 +48,7 @@ const taskBoardSchema = new mongoose.Schema({
   ],
   visibility: {
     type: String,
-    enum: ['Team', 'Private'],
+    enum: ["Team", "Private"],
   },
   members: [
     {
@@ -59,7 +62,7 @@ const taskBoardSchema = new mongoose.Schema({
   },
 });
 
-export const TasksBoard = mongoose.model('TaskBoard', taskBoardSchema);
+export const TasksBoard = mongoose.model("TaskBoard", taskBoardSchema);
 
 export type TasksListType = mongoose.Document & {
   userId: string;
