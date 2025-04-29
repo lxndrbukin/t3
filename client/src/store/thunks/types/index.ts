@@ -3,4 +3,5 @@ export type BoardData = {
   description: string;
   columns: string[] | null;
   visibility: string;
+  key: string;
 };
