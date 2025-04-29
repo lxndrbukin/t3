@@ -20,6 +20,7 @@ export type TaskProps = {
   id: number;
   title: string;
   description: string;
+  key: string;
   category: string;
   completed: boolean;
   createdAt: Date;
@@ -31,6 +32,8 @@ export type BoardProps = {
   id: number;
   owner: number;
   boardName: string;
+  description: string;
+  key: string;
   columns: BoardColumnProps[];
 };
 
@@ -51,4 +54,3 @@ export type BoardsProps = {
   list: BoardListItemProps[];
   currentBoard: BoardProps | null;
 };
-
