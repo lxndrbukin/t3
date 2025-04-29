@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { v4 as uuidv4 } from 'uuid';
 
 const taskBoardSchema = new mongoose.Schema({
   id: {
@@ -7,6 +8,10 @@ const taskBoardSchema = new mongoose.Schema({
   },
   owner: {
     type: Number,
+    required: true,
+  },
+  key: {
+    type: String,
     required: true,
   },
   boardName: {

@@ -5,6 +5,7 @@ import {
   createBoard,
   createColumn,
   deleteColumn,
+  createTask,
 } from './boards.controller';
 
 const boardsRouter: Router = Router();
@@ -29,6 +30,11 @@ boardsRouter.delete(
   '/:userId/:boardId/columns/:columnId',
   isAuthenticated,
   deleteColumn
+);
+boardsRouter.post(
+  '/:userId/:boardId/columns/:columnId/tasks',
+  isAuthenticated,
+  createTask
 );
 
 export default boardsRouter;
