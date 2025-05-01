@@ -10,7 +10,7 @@ export const subNavLinks: Array<NavLink> = [
   { name: "Settings", href: "/settings", icon: "fa-solid fa-gear" },
   {
     name: "Login",
-    href: "/login",
+    href: "/auth",
     icon: "fa-solid fa-right-to-bracket",
     auth: false,
   },
