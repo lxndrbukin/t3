@@ -1,4 +1,4 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { Router, Request, Response, NextFunction } from "express";
 import {
   getBoardsList,
   getBoard,
@@ -6,7 +6,7 @@ import {
   createColumn,
   deleteColumn,
   createTask,
-} from './boards.controller';
+} from "./boards.controller";
 
 const boardsRouter: Router = Router();
 
@@ -18,21 +18,21 @@ const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
   ) {
     return next();
   } else {
-    res.status(401).json({ message: 'Access unauthorized' });
+    res.status(401).json({ message: "Access unauthorized" });
   }
 };
 
-boardsRouter.get('/:userId', isAuthenticated, getBoardsList);
-boardsRouter.get('/:userId/:boardId', isAuthenticated, getBoard);
-boardsRouter.post('/:userId', isAuthenticated, createBoard);
-boardsRouter.post('/:userId/:boardId/columns', isAuthenticated, createColumn);
+boardsRouter.get("/", isAuthenticated, getBoardsList);
+boardsRouter.get("/:boardId", isAuthenticated, getBoard);
+boardsRouter.post("/", isAuthenticated, createBoard);
+boardsRouter.post("/:boardId/columns", isAuthenticated, createColumn);
 boardsRouter.delete(
-  '/:userId/:boardId/columns/:columnId',
+  "/:boardId/columns/:columnId",
   isAuthenticated,
   deleteColumn
 );
 boardsRouter.post(
-  '/:userId/:boardId/columns/:columnId/tasks',
+  "/:boardId/columns/:columnId/tasks",
   isAuthenticated,
   createTask
 );
