@@ -225,13 +225,17 @@ export const createTask = asyncHandler(async (req: Request, res: Response) => {
     owner: (req.session as any).passport.user,
     id: boardId,
   });
+  const totalTasks = currentBoard?.columns.reduce(
+    (acc, col) => acc + col.tasks.length,
+    0
+  );
   if (!currentBoard) {
     return res.status(404).json({ message: ErrorMessage.BOARD_NOT_FOUND });
   }
   if (!currentBoard.columns[columnId - 1]) {
     return res.status(404).json({ message: ErrorMessage.COLUMN_NOT_FOUND });
   }
-  const taskId = currentBoard.columns[columnId - 1].tasks.length + 1;
+  const taskId = totalTasks ? totalTasks + 1 : 1;
   try {
     currentBoard.columns[columnId - 1].tasks.push({
       id: taskId,
