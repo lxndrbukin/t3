@@ -50,8 +50,11 @@ export default function BoardColumn({ id, name, tasks }: BoardColumnProps) {
               <p className="board-column-task-description">
                 {task.description}
               </p>
-              <div>
-                <div className="borad-column-task-key">{task.key}</div>
+              <div className="board-column-task-info">
+                <div className="borad-column-task-key">
+                  <i className="fa-solid fa-square"></i>
+                  <span>{task.key}</span>
+                </div>
                 <div className="board-column-task-owner"></div>
               </div>
             </div>

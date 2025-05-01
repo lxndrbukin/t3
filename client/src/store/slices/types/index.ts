@@ -21,6 +21,8 @@ export type TaskProps = {
   title: string;
   description: string;
   key: string;
+  owner: number;
+  assignedTo: number | null;
   category: string;
   completed: boolean;
   createdAt: Date;

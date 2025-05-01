@@ -384,7 +384,7 @@
         .board-column-task {
           display: flex;
           flex-direction: column;
-          gap: 8px;
+          gap: 12px;
           padding: 8px;
           background-color: $color-white;
           box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04),
@@ -404,16 +404,35 @@
             font-size: 14px;
           }
 
-          .board-column-task-owner {
+          .board-column-task-info {
             display: flex;
             flex-direction: row;
             gap: 8px;
             align-items: center;
-            justify-content: flex-end;
+            justify-content: space-between;
 
-            p {
-              margin: 0;
-              font-size: 12px;
+            .borad-column-task-key {
+              display: flex;
+              flex-direction: row;
+              gap: 8px;
+              align-items: center;
+              justify-content: center;
+
+              i {
+                font-size: 16px;
+              }
+            }
+
+            .board-column-task-owner {
+              display: flex;
+              flex-direction: row;
+              gap: 8px;
+              align-items: center;
+              justify-content: center;
+
+              i {
+                font-size: 16px;
+              }
             }
           }
         }
