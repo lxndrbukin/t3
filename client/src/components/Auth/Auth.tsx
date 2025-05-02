@@ -19,6 +19,10 @@ export default function Auth() {
           <i className="fa-brands fa-google"></i>
           <span>Login with Google</span>
         </button>
+        <button className="auth-button facebook" onClick={handleClick}>
+          <i className="fa-brands fa-facebook"></i>
+          <span>Login with Facebook</span>
+        </button>
       </div>
     </div>
   );
