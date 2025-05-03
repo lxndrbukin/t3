@@ -217,6 +217,48 @@ export const updateColumn = async (req: Request, res: Response) => {
   }
 };
 
+export const createTask = asyncHandler(async (req: Request, res: Response) => {
+  const { title, dueDate, description } = req.body;
+  const boardId = Number(req.params.boardId);
+  const columnId = Number(req.params.columnId);
+  let currentBoard = await TasksBoard.findOne({
+    owner: (req.session as any).passport.user,
+    id: boardId,
+  });
+  const totalTasks = currentBoard?.columns.reduce(
+    (acc, col) => acc + col.tasks.length,
+    0
+  );
+  if (!currentBoard) {
+    return res.status(404).json({ message: ErrorMessage.BOARD_NOT_FOUND });
+  }
+  if (!currentBoard.columns[columnId - 1]) {
+    return res.status(404).json({ message: ErrorMessage.COLUMN_NOT_FOUND });
+  }
+  const taskId = totalTasks ? totalTasks + 1 : 1;
+  try {
+    currentBoard.columns[columnId - 1].tasks.push({
+      id: taskId,
+      title,
+      key: `${currentBoard.key.toUpperCase()}-${taskId}`,
+      owner: { userId: (req.session as any).passport.user },
+      description,
+      dueDate,
+      completed: false,
+    });
+    await currentBoard.save();
+    res.status(204).json({
+      ...currentBoard.columns[columnId - 1].tasks[taskId - 1],
+      columnId,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message:
+        error instanceof Error ? error.message : ErrorMessage.UNKNOWN_ERROR,
+    });
+  }
+});
+
 export const getTask = asyncHandler(async (req: Request, res: Response) => {
   const { taskId } = req.params;
   try {
@@ -249,48 +291,6 @@ export const getTask = asyncHandler(async (req: Request, res: Response) => {
       .find((col: any) => col.id === Number(req.params.columnId))!
       .tasks.find((task: any) => task.id === Number(taskId));
     res.status(200).json(task);
-  } catch (error) {
-    res.status(500).json({
-      message:
-        error instanceof Error ? error.message : ErrorMessage.UNKNOWN_ERROR,
-    });
-  }
-});
-
-export const createTask = asyncHandler(async (req: Request, res: Response) => {
-  const { title, dueDate, description } = req.body;
-  const boardId = Number(req.params.boardId);
-  const columnId = Number(req.params.columnId);
-  let currentBoard = await TasksBoard.findOne({
-    owner: (req.session as any).passport.user,
-    id: boardId,
-  });
-  const totalTasks = currentBoard?.columns.reduce(
-    (acc, col) => acc + col.tasks.length,
-    0
-  );
-  if (!currentBoard) {
-    return res.status(404).json({ message: ErrorMessage.BOARD_NOT_FOUND });
-  }
-  if (!currentBoard.columns[columnId - 1]) {
-    return res.status(404).json({ message: ErrorMessage.COLUMN_NOT_FOUND });
-  }
-  const taskId = totalTasks ? totalTasks + 1 : 1;
-  try {
-    currentBoard.columns[columnId - 1].tasks.push({
-      id: taskId,
-      title,
-      key: `${currentBoard.key.toUpperCase()}-${taskId}`,
-      owner: (req.session as any).passport.user,
-      description,
-      dueDate,
-      completed: false,
-    });
-    await currentBoard.save();
-    res.status(204).json({
-      ...currentBoard.columns[columnId - 1].tasks[taskId - 1],
-      columnId,
-    });
   } catch (error) {
     res.status(500).json({
       message:
