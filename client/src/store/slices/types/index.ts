@@ -55,4 +55,5 @@ export type BoardListItemProps = {
 export type BoardsProps = {
   list: BoardListItemProps[];
   currentBoard: BoardProps | null;
+  currentTask: TaskProps | null;
 };

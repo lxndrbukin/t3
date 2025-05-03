@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch, TaskProps } from "../../store";
 import CreateBoardTaskForm from "./CreateBoardTaskForm";
+import BoardTaskInfo from "./BoardTaskInfo";
 import Popup from "../../assets/reusable/Popup";
+import { getTask } from "../../store/thunks/boards";
 
 type BoardColumnProps = {
   id: number;
@@ -11,33 +13,45 @@ type BoardColumnProps = {
 };
 
 export default function BoardColumn({ id, name, tasks }: BoardColumnProps) {
-  const { user } = useSelector((state: RootState) => state.session);
-  const { currentBoard, list } = useSelector(
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { currentBoard, currentTask, list } = useSelector(
     (state: RootState) => state.boards
   );
+  const { user } = useSelector((state: RootState) => state.session);
 
-  const [showCreateTask, setShowCreateTask] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
-
-  const handleCreateTask = () => {
-    setShowCreateTask(!showCreateTask);
-  };
+  const [showTaskInfo, setShowTaskInfo] = useState(false);
+  const [data, setData] = useState({
+    taskId: 0,
+    columnId: 0,
+    boardId: 0,
+  });
 
   const handleCreateTaskForm = () => {
-    setShowCreateTask(false);
     setShowCreateForm(!showCreateForm);
   };
 
+  const handleTaskInfo = ({
+    taskId,
+    columnId,
+    boardId,
+  }: {
+    taskId: number;
+    columnId: number;
+    boardId: number;
+  }) => {
+    setShowTaskInfo(true);
+    setData({ taskId, columnId, boardId });
+  };
+
   const renderCreateTask = () => {
-    if (showCreateTask) {
-      return (
-        <div onClick={handleCreateTaskForm} className="board-create-task">
-          <i className="fa-solid fa-plus"></i>
-          <p>Create Task</p>
-        </div>
-      );
-    }
-    return null;
+    return (
+      <div onClick={handleCreateTaskForm} className="board-create-task">
+        <i className="fa-solid fa-plus"></i>
+        <p>Create Task</p>
+      </div>
+    );
   };
 
   const renderTasks = () => {
@@ -45,7 +59,17 @@ export default function BoardColumn({ id, name, tasks }: BoardColumnProps) {
       return (
         <div className="board-column-tasks">
           {tasks.map((task) => (
-            <div key={task.id} className="board-column-task">
+            <div
+              onClick={() =>
+                handleTaskInfo({
+                  taskId: task.id,
+                  columnId: id,
+                  boardId: currentBoard!.id,
+                })
+              }
+              key={task.id}
+              className="board-column-task"
+            >
               <h4 className="board-column-task-title">{task.title}</h4>
               <p className="board-column-task-description">
                 {task.description}
@@ -67,11 +91,7 @@ export default function BoardColumn({ id, name, tasks }: BoardColumnProps) {
   };
 
   return (
-    <div
-      onMouseEnter={handleCreateTask}
-      onMouseLeave={handleCreateTask}
-      className="board-column"
-    >
+    <div className="board-column">
       <h3 className="board-column-header">
         <span>{name}</span> <span>{tasks.length}</span>
       </h3>
@@ -82,6 +102,17 @@ export default function BoardColumn({ id, name, tasks }: BoardColumnProps) {
             boards={list!}
             currentColumn={{ id, name }}
             currentBoard={currentBoard!}
+          />
+        </Popup>
+      )}
+      {showTaskInfo && (
+        <Popup setIsVisible={setShowTaskInfo}>
+          <BoardTaskInfo
+            data={{
+              taskId: data.taskId,
+              columnId: data.columnId,
+              boardId: data.boardId,
+            }}
           />
         </Popup>
       )}
