@@ -1,27 +1,29 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
   BoardProps,
   BoardsProps,
   BoardColumnProps,
   BoardListItemProps,
   TaskProps,
-} from './types';
+} from "./types";
 import {
   getBoardsList,
   createBoard,
   getBoard,
   createColumn,
   deleteColumn,
+  getTask,
   createTask,
-} from '../thunks/boards';
+} from "../thunks/boards";
 
 const initialState: BoardsProps = {
   list: [],
   currentBoard: null,
+  currentTask: null,
 };
 
 const boardsSlice = createSlice({
-  name: 'boards',
+  name: "boards",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -58,11 +60,18 @@ const boardsSlice = createSlice({
       }
     );
     builder.addCase(
+      getTask.fulfilled,
+      (state: BoardsProps, action: PayloadAction<TaskProps>) => {
+        state.currentTask = action.payload;
+      }
+    );
+    builder.addCase(
       createTask.fulfilled,
       (state: BoardsProps, action: PayloadAction<TaskProps>) => {
-        state.currentBoard!.columns.find(
-          (column) => column.id === action.payload.columnId
-        )!.tasks.push(action.payload);
+        if (!state.currentBoard) return;
+        state.currentBoard.columns
+          .find((column) => column.id === action.payload.columnId)!
+          .tasks.push(action.payload);
       }
     );
   },

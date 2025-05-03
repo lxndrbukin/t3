@@ -63,6 +63,26 @@ export const deleteColumn = createAsyncThunk(
   }
 );
 
+export const getTask = createAsyncThunk(
+  "boards/getTask",
+  async ({
+    userId,
+    boardId,
+    columnId,
+    taskId,
+  }: {
+    userId: number;
+    boardId: number;
+    columnId: number;
+    taskId: number;
+  }) => {
+    const response = await axios.get(
+      `/v1/${userId}/boards/${boardId}/columns/${columnId}/tasks/${taskId}`
+    );
+    return response.data;
+  }
+);
+
 export const createTask = createAsyncThunk(
   "boards/createTask",
   async ({

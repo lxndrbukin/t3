@@ -392,6 +392,7 @@
           border-radius: 4px;
           width: 100%;
           box-sizing: border-box;
+          cursor: pointer;
 
           .board-column-task-title {
             margin: 0;
@@ -441,7 +442,7 @@
           display: flex;
           flex-direction: row;
           gap: 8px;
-          padding: 8px;
+          padding: 6px;
           border: 1px solid $color-light-grey;
           border-radius: 4px;
           width: 100%;
@@ -451,14 +452,94 @@
           justify-content: center;
 
           i {
-            font-size: 24px;
+            font-size: 16px;
           }
 
           p {
             margin: 0;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: bold;
           }
+        }
+      }
+    }
+  }
+}
+
+.board-task-info-popup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 80vw;
+  height: 80vh;
+  background-color: $color-white;
+  border-radius: 4px;
+  padding: 8px;
+  box-sizing: border-box;
+  border: 1px solid $color-light-grey;
+
+  .board-task-info-header {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+
+    .board-task-info-key {
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+
+      i {
+        font-size: 16px;
+      }
+    }
+  }
+
+  .board-task-info-body {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    justify-content: center;
+    height: 100%;
+    padding: 8px;
+
+    .board-task-info-left {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 65%;
+      height: 100%;
+
+      .board-task-info-title {
+        margin: 0;
+        font-size: 24px;
+        font-weight: bold;
+      }
+    }
+
+    .board-task-info-right {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      width: 35%;
+      height: 100%;
+
+      .board-task-info-right-item {
+        display: flex;
+        flex-direction: row;
+        gap: 8px;
+
+        h5 {
+          margin: 0;
+          font-size: 16px;
+          font-weight: bold;
+        }
+
+        span {
+          margin: 0;
+          font-size: 16px;
         }
       }
     }

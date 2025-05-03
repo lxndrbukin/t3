@@ -1,5 +1,5 @@
-import { FormEvent,useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { FormEvent, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   RootState,
   AppDispatch,
@@ -7,7 +7,7 @@ import {
   BoardListItemProps,
   getBoardsList,
   createTask,
-} from '../../store';
+} from "../../store";
 
 type CreateBoardTaskFormProps = {
   boards?: BoardListItemProps[];
@@ -23,6 +23,8 @@ export default function CreateBoardTaskForm({
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.session);
 
+  const [columnId, setColumnId] = useState<number>(currentColumn?.id!);
+
   useEffect(() => {
     if (boards?.length === 0) {
       dispatch(getBoardsList(user?.userId!));
@@ -36,12 +38,27 @@ export default function CreateBoardTaskForm({
       description: e.currentTarget.description.value,
       dueDate: new Date(e.currentTarget.dueDate.value),
     };
-    dispatch(createTask({
-      userId: user?.userId!,
-      boardId: currentBoard?.id!,
-      columnId: currentColumn?.id!,
-      data: taskData,
-    }));
+    dispatch(
+      createTask({
+        userId: user?.userId!,
+        boardId: currentBoard?.id!,
+        columnId,
+        data: taskData,
+      })
+    );
+  };
+
+  const handleColumnSelectChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const { columns } = currentBoard!;
+    const selectedColumn = columns.find(
+      (column) => column.name === e.currentTarget.value
+    );
+    console.log(selectedColumn);
+    if (selectedColumn) {
+      setColumnId(selectedColumn.id);
+    }
   };
 
   const renderColumnSelectOptions = () => {
@@ -75,49 +92,49 @@ export default function CreateBoardTaskForm({
   };
 
   return (
-    <div className='create-board-task-form'>
+    <div className="create-board-task-form">
       <h2>Create Task</h2>
-      <form onSubmit={(e)=> handleSubmit(e)}>
-        <div className='form-select'>
-          <label htmlFor='board'>Board</label>
+      <form onSubmit={(e) => handleSubmit(e)}>
+        <div className="form-select">
+          <label htmlFor="board">Board</label>
           <select
-            name='board'
-            id='board'
+            name="board"
+            id="board"
             disabled={currentBoard ? true : false}
           >
             {renderBoardSelectOptions()}
           </select>
         </div>
-        <div className='form-select'>
-          <label htmlFor='type'>Type</label>
-          <select name='type' id='type'>
+        <div className="form-select">
+          <label htmlFor="type">Type</label>
+          <select name="type" id="type" onChange={handleColumnSelectChange}>
             {renderColumnSelectOptions()}
           </select>
         </div>
-        <div className='form-input'>
-          <label htmlFor='taskTitle'>Title</label>
+        <div className="form-input">
+          <label htmlFor="taskTitle">Title</label>
           <input
-            type='text'
-            placeholder='Short summary'
-            id='taskTitle'
-            name='taskTitle'
+            type="text"
+            placeholder="Short summary"
+            id="taskTitle"
+            name="taskTitle"
           />
         </div>
-        <div className='form-textarea'>
-          <label htmlFor='description'>Description</label>
+        <div className="form-textarea">
+          <label htmlFor="description">Description</label>
           <textarea
-            name='description'
-            id='description'
+            name="description"
+            id="description"
             cols={30}
             rows={10}
-            placeholder='Describe the task'
+            placeholder="Describe the task"
           ></textarea>
         </div>
-        <div className='form-input'>
-          <label htmlFor='dueDate'>Due</label>
-          <input type='datetime-local' name='dueDate' id='dueDate' />
+        <div className="form-input">
+          <label htmlFor="dueDate">Due</label>
+          <input type="datetime-local" name="dueDate" id="dueDate" />
         </div>
-        <button type='submit'>Create Task</button>
+        <button type="submit">Create Task</button>
       </form>
     </div>
   );
