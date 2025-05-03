@@ -52,15 +52,17 @@ export default function BoardTaskInfo({
         <div className="board-task-info-right">
           <div className="board-task-info-right-item">
             <h5>Status:</h5>
-            <span></span>
+            <span>
+              {currentTask?.completed ? "Completed" : "Not Completed"}
+            </span>
           </div>
           <div className="board-task-info-right-item">
             <h5>Assignee:</h5>
-            <span></span>
+            <span>{currentTask?.assignedTo || ""}</span>
           </div>
           <div className="board-task-info-right-item">
             <h5>Reporter:</h5>
-            <span></span>
+            <span>{currentTask?.owner || ""}</span>
           </div>
         </div>
       </div>
