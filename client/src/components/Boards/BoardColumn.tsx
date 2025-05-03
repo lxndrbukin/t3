@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState, AppDispatch, TaskProps } from "../../store";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store";
 import CreateBoardTaskForm from "./CreateBoardTaskForm";
 import BoardTaskInfo from "./BoardTaskInfo";
 import Popup from "../../assets/reusable/Popup";
-import { getTask } from "../../store/thunks/boards";
 
 type BoardColumnProps = {
   id: number;
@@ -13,12 +12,9 @@ type BoardColumnProps = {
 };
 
 export default function BoardColumn({ id, name, tasks }: BoardColumnProps) {
-  const dispatch = useDispatch<AppDispatch>();
-
-  const { currentBoard, currentTask, list } = useSelector(
+  const { currentBoard, list } = useSelector(
     (state: RootState) => state.boards
   );
-  const { user } = useSelector((state: RootState) => state.session);
 
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showTaskInfo, setShowTaskInfo] = useState(false);
@@ -93,7 +89,8 @@ export default function BoardColumn({ id, name, tasks }: BoardColumnProps) {
   return (
     <div className="board-column">
       <h3 className="board-column-header">
-        <span>{name}</span> <span>{tasks.length}</span>
+        <span>{name}</span>
+        <span>{tasks.length}</span>
       </h3>
       <div className="board-column-tasks">{renderTasks()}</div>
       {showCreateForm && (
