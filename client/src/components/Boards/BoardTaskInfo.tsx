@@ -44,10 +44,6 @@ export default function BoardTaskInfo({
             <h5>Description:</h5>
             {currentTask?.description || ""}
           </p>
-          <div className="board-task-info-owner">
-            <i className="fa-solid fa-user"></i>
-            <span>{currentTask?.owner || ""}</span>
-          </div>
         </div>
         <div className="board-task-info-right">
           <div className="board-task-info-right-item">
@@ -58,11 +54,17 @@ export default function BoardTaskInfo({
           </div>
           <div className="board-task-info-right-item">
             <h5>Assignee:</h5>
-            <span>{currentTask?.assignedTo || ""}</span>
+            <div className="board-task-info-user">
+              <i className="fa-solid fa-user"></i>
+              <span>{currentTask?.assignedTo?.userId || ""}</span>
+            </div>
           </div>
           <div className="board-task-info-right-item">
             <h5>Reporter:</h5>
-            <span>{currentTask?.owner || ""}</span>
+            <div className="board-task-info-user">
+              <i className="fa-solid fa-user"></i>
+              <span>{currentTask?.owner.userId || ""}</span>
+            </div>
           </div>
         </div>
       </div>

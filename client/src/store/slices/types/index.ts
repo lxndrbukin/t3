@@ -21,8 +21,8 @@ export type TaskProps = {
   title: string;
   description: string;
   key: string;
-  owner: number;
-  assignedTo: number | null;
+  owner: { userId: number };
+  assignedTo: { userId: number } | null;
   category: string;
   completed: boolean;
   createdAt: Date;
