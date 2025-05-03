@@ -5,24 +5,18 @@ import {
   createBoard,
   createColumn,
   deleteColumn,
+  getTask,
   createTask,
 } from "./boards.controller";
 
 const boardsRouter: Router = Router();
 
 boardsRouter.get("/", getBoardsList);
-boardsRouter.get("/:boardId", getBoard);
 boardsRouter.post("/", createBoard);
+boardsRouter.get("/:boardId", getBoard);
 boardsRouter.post("/:boardId/columns", createColumn);
-boardsRouter.delete(
-  "/:boardId/columns/:columnId",
-
-  deleteColumn
-);
-boardsRouter.post(
-  "/:boardId/columns/:columnId/tasks",
-
-  createTask
-);
+boardsRouter.delete("/:boardId/columns/:columnId", deleteColumn);
+boardsRouter.post("/:boardId/columns/:columnId/tasks", createTask);
+boardsRouter.get("/:boardId/columns/:columnId/tasks/:taskId", getTask);
 
 export default boardsRouter;

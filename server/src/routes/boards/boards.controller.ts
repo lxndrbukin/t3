@@ -217,6 +217,46 @@ export const updateColumn = async (req: Request, res: Response) => {
   }
 };
 
+export const getTask = asyncHandler(async (req: Request, res: Response) => {
+  const { taskId } = req.params;
+  try {
+    const board = await TasksBoard.findOne({
+      owner: (req.session as any).passport.user,
+      id: Number(req.params.boardId),
+    }).lean();
+    if (!board) {
+      return res.status(404).json({ message: ErrorMessage.BOARD_NOT_FOUND });
+    }
+    const filteredTask = {
+      ...board,
+      columns: board.columns.map((col: any) => ({
+        id: col.id,
+        name: col.name,
+        order: col.order,
+        tasks: col.tasks.map((task: any) => ({
+          id: task.id,
+          title: task.title,
+          key: task.key,
+          owner: task.owner,
+          assignedTo: task.assignedTo,
+          description: task.description,
+          completed: task.completed,
+          dueDate: task.dueDate,
+        })),
+      })),
+    };
+    const task = filteredTask.columns
+      .find((col: any) => col.id === Number(req.params.columnId))!
+      .tasks.find((task: any) => task.id === Number(taskId));
+    res.status(200).json(task);
+  } catch (error) {
+    res.status(500).json({
+      message:
+        error instanceof Error ? error.message : ErrorMessage.UNKNOWN_ERROR,
+    });
+  }
+});
+
 export const createTask = asyncHandler(async (req: Request, res: Response) => {
   const { title, dueDate, description } = req.body;
   const boardId = Number(req.params.boardId);
