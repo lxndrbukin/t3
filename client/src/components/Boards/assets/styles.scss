@@ -471,10 +471,10 @@
   flex-direction: column;
   gap: 8px;
   width: 80vw;
-  height: 80vh;
+  min-height: 60vh;
   background-color: $color-white;
   border-radius: 4px;
-  padding: 8px;
+  padding: 16px;
   box-sizing: border-box;
   border: 1px solid $color-light-grey;
 
@@ -489,9 +489,10 @@
       gap: 8px;
       align-items: center;
       justify-content: center;
+      font-size: 20px;
 
       i {
-        font-size: 16px;
+        font-size: 20px;
       }
     }
   }
@@ -529,17 +530,30 @@
       .board-task-info-right-item {
         display: flex;
         flex-direction: row;
-        gap: 8px;
+        gap: 25px;
 
         h5 {
           margin: 0;
           font-size: 16px;
           font-weight: bold;
+          min-width: 75px;
         }
 
-        span {
-          margin: 0;
-          font-size: 16px;
+        .board-task-info-user {
+          display: flex;
+          flex-direction: row;
+          gap: 8px;
+          align-items: center;
+          justify-content: center;
+
+          i {
+            font-size: 16px;
+          }
+
+          span {
+            margin: 0;
+            font-size: 16px;
+          }
         }
       }
     }
