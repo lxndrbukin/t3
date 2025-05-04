@@ -13,12 +13,16 @@ const asyncHandler =
 export const createBoard = async (req: Request, res: Response) => {
   const { boardName, description, columns, key } = req.body;
   const boardId = await TasksBoard.countDocuments({
-    owner: (req.session as any).passport.user,
+    owner: {
+      userId: (req.session as any).passport.user,
+    },
   });
   try {
     const tasksBoard = await TasksBoard.create({
       id: boardId + 1,
-      owner: (req.session as any).passport.user,
+      owner: {
+        userId: (req.session as any).passport.user,
+      },
       boardName,
       key: key.toUpperCase(),
       description,
@@ -42,7 +46,9 @@ export const getBoardsList = async (req: Request, res: Response) => {
   try {
     const tasksBoards = await TasksBoard.find(
       {
-        owner: (req.session as any).passport.user,
+        owner: {
+          userId: (req.session as any).passport.user,
+        },
       },
       { boardName: 1, id: 1, description: 1, createdAt: 1, _id: 0 }
     );
@@ -59,9 +65,13 @@ export const getBoard = asyncHandler(async (req: Request, res: Response) => {
   try {
     const { boardId } = req.params;
     const tasksBoard = await TasksBoard.findOne({
-      owner: (req.session as any).passport.user,
+      owner: {
+        userId: (req.session as any).passport.user,
+      },
       id: boardId,
-    }).lean();
+    })
+      .lean()
+      .select("-_id -__v");
     if (!tasksBoard) {
       return res
         .status(404)
@@ -98,7 +108,9 @@ export const deleteBoard = async (req: Request, res: Response) => {
   const { boardId } = req.params;
   try {
     await TasksBoard.deleteOne({
-      owner: (req.session as any).passport.user,
+      owner: {
+        userId: (req.session as any).passport.user,
+      },
       id: boardId,
     });
     res.status(204).json();
@@ -116,7 +128,9 @@ export const updateBoard = async (req: Request, res: Response) => {
   try {
     await TasksBoard.updateOne(
       {
-        owner: (req.session as any).passport.user,
+        owner: {
+          userId: (req.session as any).passport.user,
+        },
         id: boardId,
       },
       {
@@ -142,7 +156,9 @@ export const createColumn = asyncHandler(
     const { boardId } = req.params;
     try {
       const currentBoard = await TasksBoard.findOne({
-        owner: (req.session as any).passport.user,
+        owner: {
+          userId: (req.session as any).passport.user,
+        },
         id: boardId,
       }).lean();
       const columnOrder = currentBoard!.columns.length;
@@ -151,7 +167,9 @@ export const createColumn = asyncHandler(
       }
       const updatedBoard = await TasksBoard.findOneAndUpdate(
         {
-          owner: (req.session as any).passport.user,
+          owner: {
+            userId: (req.session as any).passport.user,
+          },
           id: boardId,
         },
         {
@@ -189,7 +207,11 @@ export const deleteColumn = async (req: Request, res: Response) => {
   const { columnId } = req.params;
   try {
     await TasksBoard.updateOne(
-      { owner: (req.session as any).passport.user },
+      {
+        owner: {
+          userId: (req.session as any).passport.user,
+        },
+      },
       { $pull: { columns: { id: columnId } } }
     );
     res.status(204).json();
@@ -205,7 +227,11 @@ export const updateColumn = async (req: Request, res: Response) => {
   const { columnName, columnId } = req.body;
   try {
     await TasksBoard.updateOne(
-      { owner: (req.session as any).passport.user },
+      {
+        owner: {
+          userId: (req.session as any).passport.user,
+        },
+      },
       { $set: { [`columns.$[columnIndex].name`]: columnName } },
       { arrayFilters: [{ columnIndex: { $eq: columnId } }] }
     );
@@ -223,7 +249,9 @@ export const createTask = asyncHandler(async (req: Request, res: Response) => {
   const boardId = Number(req.params.boardId);
   const columnId = Number(req.params.columnId);
   let currentBoard = await TasksBoard.findOne({
-    owner: (req.session as any).passport.user,
+    owner: {
+      userId: (req.session as any).passport.user,
+    },
     id: boardId,
   });
   const totalTasks = currentBoard?.columns.reduce(
@@ -264,13 +292,15 @@ export const getTask = asyncHandler(async (req: Request, res: Response) => {
   const { taskId } = req.params;
   try {
     const board = await TasksBoard.findOne({
-      owner: (req.session as any).passport.user,
+      owner: {
+        userId: (req.session as any).passport.user,
+      },
       id: Number(req.params.boardId),
     }).lean();
     if (!board) {
       return res.status(404).json({ message: ErrorMessage.BOARD_NOT_FOUND });
     }
-    const filteredTask = {
+    const filteredBoard = {
       ...board,
       columns: board.columns.map((col: any) => ({
         id: col.id,
@@ -284,16 +314,17 @@ export const getTask = asyncHandler(async (req: Request, res: Response) => {
           assignedTo: task.assignedTo,
           description: task.description,
           completed: task.completed,
+          createdAt: task.createdAt,
           dueDate: task.dueDate,
         })),
       })),
     };
-    const task = filteredTask.columns
+    const task = filteredBoard.columns
       .find((col: any) => col.id === Number(req.params.columnId))
       ?.tasks.find((task: any) => task.id === Number(taskId));
 
     if (!task) {
-      return res.status(404).json({ message: "Task not found" });
+      return res.status(404).json({ message: ErrorMessage.TASK_NOT_FOUND });
     }
     const taskOwner = task.owner?.userId
       ? await User.findOne({
@@ -311,8 +342,8 @@ export const getTask = asyncHandler(async (req: Request, res: Response) => {
       : null;
     const taskInfo = {
       ...task,
-      owner: taskOwner || task.owner || { userId: null },
-      assignedTo: taskAssignee || task.assignedTo || { userId: null },
+      owner: taskOwner || null,
+      assignedTo: taskAssignee || null,
     };
     res.status(200).json(taskInfo);
   } catch (error) {
