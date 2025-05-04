@@ -26,7 +26,23 @@ export default function SideNav() {
   return (
     <div className="nav">
       <Link to="/" className="nav-logo">
-        <i title="Taskify" className="fa-solid fa-check-double"></i>
+        <svg
+          width="100"
+          height="100"
+          viewBox="0 0 100 100"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <rect x="20" y="20" width="40" height="40" rx="8" fill="#0052CC" />
+          <rect
+            x="40"
+            y="40"
+            width="40"
+            height="40"
+            rx="8"
+            fill="#2684FF"
+            opacity="0.8"
+          />
+        </svg>
       </Link>
       <div className="nav-menu-container">
         <ul className="nav-menu">{renderLinks(navLinks)}</ul>
