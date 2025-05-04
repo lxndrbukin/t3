@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { TasksBoard } from "../../models/board.model";
+import User from "../../models/user.model";
 
 import { ErrorMessage } from "./types";
 import { boardColumns } from "./assets";
@@ -288,9 +289,32 @@ export const getTask = asyncHandler(async (req: Request, res: Response) => {
       })),
     };
     const task = filteredTask.columns
-      .find((col: any) => col.id === Number(req.params.columnId))!
-      .tasks.find((task: any) => task.id === Number(taskId));
-    res.status(200).json(task);
+      .find((col: any) => col.id === Number(req.params.columnId))
+      ?.tasks.find((task: any) => task.id === Number(taskId));
+
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+    const taskOwner = task.owner?.userId
+      ? await User.findOne({
+          userId: task.owner.userId,
+        })
+          .lean()
+          .select("-password -_id -__v -googleId -joinDate")
+      : null;
+    const taskAssignee = task.assignedTo?.userId
+      ? await User.findOne({
+          userId: task.assignedTo.userId,
+        })
+          .lean()
+          .select("-password -_id -__v -googleId -joinDate")
+      : null;
+    const taskInfo = {
+      ...task,
+      owner: taskOwner || task.owner || { userId: null },
+      assignedTo: taskAssignee || task.assignedTo || { userId: null },
+    };
+    res.status(200).json(taskInfo);
   } catch (error) {
     res.status(500).json({
       message:
