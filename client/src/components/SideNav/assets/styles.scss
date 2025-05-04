@@ -1,4 +1,4 @@
-@import '../../../assets/variables.scss';
+@import "../../../assets/variables.scss";
 
 .nav {
   display: flex;
@@ -11,7 +11,7 @@
   .nav-logo {
     font-weight: bold;
     padding: 8px;
-    color: $color-dark-blue;
+    color: $color-blue;
     font-size: 52px;
     user-select: none;
     align-self: center;
@@ -56,14 +56,14 @@
 
           i {
             font-size: 28px;
-            color: $color-dark-blue;
+            color: $color-blue;
           }
 
           .nav-icon {
             width: 20px;
             height: 20px;
             margin-right: 8px;
-            background-color: $color-dark-blue;
+            background-color: $color-blue;
             border-radius: 50%;
           }
         }
@@ -105,14 +105,14 @@
 
           i {
             font-size: 25px;
-            color: $color-dark-blue;
+            color: $color-blue;
           }
 
           .nav-icon {
             width: 20px;
             height: 20px;
             margin-right: 8px;
-            background-color: $color-dark-blue;
+            background-color: $color-blue;
             border-radius: 50%;
           }
         }
