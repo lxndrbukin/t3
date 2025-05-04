@@ -50,7 +50,7 @@ export const getBoardsList = async (req: Request, res: Response) => {
           userId: (req.session as any).passport.user,
         },
       },
-      { boardName: 1, id: 1, description: 1, createdAt: 1, _id: 0 }
+      { boardName: 1, id: 1, description: 1, createdAt: 1, key: 1, _id: 0 }
     );
     res.json(tasksBoards);
   } catch (error) {
