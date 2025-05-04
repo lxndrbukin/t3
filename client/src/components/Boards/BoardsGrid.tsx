@@ -1,16 +1,16 @@
-import './assets/styles.scss';
-import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import "./assets/styles.scss";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   AppDispatch,
   RootState,
   BoardListItemProps,
   getBoardsList,
-} from '../../store';
+} from "../../store";
 
-import Popup from '../../assets/reusable/Popup';
-import CreateBoardForm from './CreateBoardForm';
-import BoardsGridItem from './BoardsGridItem';
+import Popup from "../../assets/reusable/Popup";
+import CreateBoardForm from "./CreateBoardForm";
+import BoardsGridItem from "./BoardsGridItem";
 
 export default function BoardsGrid() {
   const dispatch = useDispatch<AppDispatch>();
@@ -29,7 +29,7 @@ export default function BoardsGrid() {
     return (
       <button
         onClick={() => setShowCreateBoard(true)}
-        className='create-board-button'
+        className="create-board-button"
       >
         Create Board
       </button>
@@ -43,15 +43,15 @@ export default function BoardsGrid() {
     return (
       <>
         {renderCreateBoard()}
-        <div className='boards-grid'>
+        <div className="boards-grid">
           {list.map((board: BoardListItemProps) => {
-            return <BoardsGridItem key={board.id} {...board} />;
+            return <BoardsGridItem {...board} />;
           })}
           <div
             onClick={() => setShowCreateBoard(true)}
-            className='create-board'
+            className="create-board"
           >
-            <i className='fa-solid fa-plus'></i>
+            <i className="fa-solid fa-plus"></i>
             <p>Create Board</p>
           </div>
         </div>
@@ -60,7 +60,7 @@ export default function BoardsGrid() {
   };
 
   return (
-    <div className='boards-grid-container'>
+    <div className="boards-grid-container">
       {renderBoards()}
       {showCreateBoard && (
         <Popup setIsVisible={setShowCreateBoard}>
