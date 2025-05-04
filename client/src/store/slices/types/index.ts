@@ -55,7 +55,7 @@ export type BoardListItemProps = {
   id: number;
   boardName: string;
   description: string;
-  createdAt: Date;
+  key: string;
 };
 
 export type BoardsProps = {
