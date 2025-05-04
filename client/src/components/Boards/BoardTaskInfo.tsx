@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState, AppDispatch } from "../../store";
+import { RootState, AppDispatch, BoardColumnProps } from "../../store";
 import { getTask } from "../../store/thunks/boards";
 
 type BoardTaskData = {
@@ -16,7 +16,9 @@ export default function BoardTaskInfo({
 }: BoardTaskData) {
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.session);
-  const { currentTask } = useSelector((state: RootState) => state.boards);
+  const { currentTask, currentBoard } = useSelector(
+    (state: RootState) => state.boards
+  );
 
   useEffect(() => {
     dispatch(
@@ -28,6 +30,16 @@ export default function BoardTaskInfo({
       })
     );
   }, [taskId]);
+
+  const renderStatusSelect = () => {
+    return currentBoard?.columns.map((column: BoardColumnProps) => {
+      return (
+        <option key={column.id} value={column.id}>
+          {column.name}
+        </option>
+      );
+    });
+  };
 
   return (
     <div className="board-task-info-popup">
@@ -48,24 +60,32 @@ export default function BoardTaskInfo({
         <div className="board-task-info-right">
           <div className="board-task-info-right-item">
             <h5>Status:</h5>
-            <span>
-              {currentTask?.completed ? "Completed" : "Not Completed"}
-            </span>
+            <select onChange={(e) => console.log(e.target.value)}>
+              {renderStatusSelect()}
+            </select>
           </div>
           <div className="board-task-info-right-item">
             <h5>Assignee:</h5>
             <div className="board-task-info-user">
-              <i className="fa-solid fa-user"></i>
-              <span>{currentTask?.assignedTo?.userId || ""}</span>
+              <i className="fa-solid fa-circle-user"></i>
+              <span>{currentTask?.assignedTo?.name || ""}</span>
             </div>
           </div>
           <div className="board-task-info-right-item">
             <h5>Reporter:</h5>
             <div className="board-task-info-user">
-              <i className="fa-solid fa-user"></i>
-              <span>{currentTask?.owner.userId || ""}</span>
+              <i className="fa-solid fa-circle-user"></i>
+              <span>{currentTask?.owner.name || ""}</span>
             </div>
           </div>
+          {/* <div className="board-task-info-right-item">
+            <h5>Created:</h5>
+            <span>{currentTask?.createdAt || ""}</span>
+          </div>
+          <div className="board-task-info-right-item">
+            <h5>Due Date:</h5>
+            <span>{currentTask?.dueDate || ""}</span>
+          </div> */}
         </div>
       </div>
     </div>

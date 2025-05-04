@@ -16,13 +16,19 @@ export type TasksProps = {
   categories: string[];
 };
 
+export type TaskUser = {
+  userId: number;
+  name: string;
+  email: string;
+};
+
 export type TaskProps = {
   id: number;
   title: string;
   description: string;
   key: string;
-  owner: { userId: number };
-  assignedTo: { userId: number } | null;
+  owner: TaskUser;
+  assignedTo: TaskUser | null;
   category: string;
   completed: boolean;
   createdAt: Date;
@@ -32,7 +38,7 @@ export type TaskProps = {
 
 export type BoardProps = {
   id: number;
-  owner: number;
+  owner: { userId: number };
   boardName: string;
   description: string;
   key: string;
