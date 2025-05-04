@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch, BoardColumnProps } from "../../store";
 import { getTask } from "../../store/thunks/boards";
+import { formatDate } from "./helpers";
 
 type BoardTaskData = {
   data: {
@@ -78,14 +79,22 @@ export default function BoardTaskInfo({
               <span>{currentTask?.owner.name || ""}</span>
             </div>
           </div>
-          {/* <div className="board-task-info-right-item">
+          <div className="board-task-info-right-item">
             <h5>Created:</h5>
-            <span>{currentTask?.createdAt || ""}</span>
+            <span>
+              {currentTask?.createdAt
+                ? formatDate(new Date(currentTask?.createdAt))
+                : ""}
+            </span>
           </div>
           <div className="board-task-info-right-item">
             <h5>Due Date:</h5>
-            <span>{currentTask?.dueDate || ""}</span>
-          </div> */}
+            <span>
+              {currentTask?.dueDate
+                ? formatDate(new Date(currentTask?.dueDate))
+                : ""}
+            </span>
+          </div>
         </div>
       </div>
     </div>
