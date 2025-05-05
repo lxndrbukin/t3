@@ -22,43 +22,77 @@
       border: 1px solid $color-light-grey;
       border-radius: 4px;
       background-color: $color-white;
-      padding: 16px;
       box-sizing: border-box;
+      color: $color-black;
+      text-decoration: none;
 
-      .boards-grid-item-header {
+      &:active {
+        color: $color-black;
+      }
+
+      .boards-grid-item-cover {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 8px;
-
-        h3 {
-          margin: 0;
-          font-size: 20px;
-        }
+        background-color: $color-light-grey;
+        height: 90px;
+        width: 100%;
       }
 
-      .boards-grid-item-body {
+      .boards-grid-item-info {
         display: flex;
-        flex-direction: row;
-        align-items: center;
-        margin-bottom: 8px;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+        padding: 8px 16px;
+        box-sizing: border-box;
+        margin-top: -30px;
 
-        p {
-          margin: 0;
-          font-size: 16px;
+        .boards-grid-item-logo {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          width: 40px;
+          height: 40px;
+          background-color: $color-light-blue;
+          border-radius: 8px;
         }
-      }
 
-      .boards-grid-item-footer {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-end;
-        align-items: center;
+        .boards-grid-item-title {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
 
-        p {
-          margin: 0;
-          font-size: 14px;
+          h3 {
+            margin: 0;
+            font-size: 20px;
+          }
+        }
+
+        .boards-grid-item-body {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+
+          p {
+            margin: 0;
+            font-size: 16px;
+          }
+        }
+
+        .boards-grid-item-footer {
+          display: flex;
+          flex-direction: row;
+          justify-content: flex-end;
+          align-items: center;
+
+          p {
+            margin: 0;
+            font-size: 14px;
+          }
         }
       }
     }
@@ -78,7 +112,6 @@
       color: $color-grey;
 
       i {
-        margin-bottom: 8px;
         font-size: 36px;
       }
 
@@ -105,14 +138,12 @@
 .create-board-form {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
   border: 1px solid $color-light-grey;
   background-color: $color-white;
   border-radius: 4px;
   padding: 20px;
   box-sizing: border-box;
-  min-width: 400px;
+  min-width: 600px;
 
   h2 {
     margin: 0 0 16px 0;
@@ -127,6 +158,13 @@
     width: 100%;
 
     .board-name {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .board-key {
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -191,6 +229,12 @@
           display: flex;
           align-items: center;
           justify-content: center;
+          background-color: $color-blue;
+          color: $color-white;
+          padding: 8px 16px;
+          border-radius: 4px;
+          cursor: pointer;
+          font-weight: bold;
         }
       }
 
@@ -259,15 +303,40 @@
       box-sizing: border-box;
     }
 
-    button {
-      background-color: $color-blue;
-      color: $color-white;
-      padding: 8px 16px;
-      border-radius: 4px;
-      cursor: pointer;
-      border: 1px solid $color-blue;
-      width: 100%;
-      box-sizing: border-box;
+    .buttons {
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      align-self: flex-end;
+
+      button[type="submit"] {
+        background-color: $color-blue;
+        color: $color-white;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        border: 1px solid $color-blue;
+        box-sizing: border-box;
+        font-weight: bold;
+        width: 117px;
+
+        i {
+          animation: rotate 1s linear infinite;
+        }
+      }
+
+      button[type="button"] {
+        background-color: $color-white;
+        color: $color-blue;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        border: 1px solid $color-blue;
+        box-sizing: border-box;
+        font-weight: bold;
+      }
     }
   }
 }
@@ -656,5 +725,14 @@
       border: none;
       cursor: pointer;
     }
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }

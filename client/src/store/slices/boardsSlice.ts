@@ -20,6 +20,7 @@ const initialState: BoardsProps = {
   list: [],
   currentBoard: null,
   currentTask: null,
+  isLoading: false,
 };
 
 const boardsSlice = createSlice({
@@ -37,32 +38,61 @@ const boardsSlice = createSlice({
       createBoard.fulfilled,
       (state: BoardsProps, action: PayloadAction<BoardProps>) => {
         state.currentBoard = action.payload;
+        state.isLoading = false;
       }
     );
+    builder.addCase(createBoard.pending, (state: BoardsProps) => {
+      state.isLoading = true;
+    });
+    builder.addCase(createBoard.rejected, (state: BoardsProps) => {
+      state.isLoading = false;
+    });
     builder.addCase(
       getBoard.fulfilled,
       (state: BoardsProps, action: PayloadAction<BoardProps>) => {
         state.currentBoard = action.payload;
+        state.isLoading = false;
       }
     );
+    builder.addCase(getBoard.pending, (state: BoardsProps) => {
+      state.isLoading = true;
+    });
+    builder.addCase(getBoard.rejected, (state: BoardsProps) => {
+      state.isLoading = false;
+    });
     builder.addCase(
       createColumn.fulfilled,
       (state: BoardsProps, action: PayloadAction<BoardColumnProps>) => {
         state.currentBoard!.columns.push(action.payload);
+        state.isLoading = false;
       }
     );
+    builder.addCase(createColumn.pending, (state: BoardsProps) => {
+      state.isLoading = true;
+    });
+    builder.addCase(createColumn.rejected, (state: BoardsProps) => {
+      state.isLoading = false;
+    });
     builder.addCase(
       deleteColumn.fulfilled,
       (state: BoardsProps, action: PayloadAction<number>) => {
         state.currentBoard!.columns = state.currentBoard!.columns.filter(
           (column) => column.id !== action.payload
         );
+        state.isLoading = false;
       }
     );
+    builder.addCase(deleteColumn.pending, (state: BoardsProps) => {
+      state.isLoading = true;
+    });
+    builder.addCase(deleteColumn.rejected, (state: BoardsProps) => {
+      state.isLoading = false;
+    });
     builder.addCase(
       getTask.fulfilled,
       (state: BoardsProps, action: PayloadAction<TaskProps>) => {
         state.currentTask = action.payload;
+        state.isLoading = false;
       }
     );
     builder.addCase(
@@ -72,8 +102,15 @@ const boardsSlice = createSlice({
         state.currentBoard.columns
           .find((column) => column.id === action.payload.columnId)!
           .tasks.push(action.payload);
+        state.isLoading = false;
       }
     );
+    builder.addCase(createTask.pending, (state: BoardsProps) => {
+      state.isLoading = true;
+    });
+    builder.addCase(createTask.rejected, (state: BoardsProps) => {
+      state.isLoading = false;
+    });
   },
 });
 

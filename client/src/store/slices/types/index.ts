@@ -62,4 +62,5 @@ export type BoardsProps = {
   list: BoardListItemProps[];
   currentBoard: BoardProps | null;
   currentTask: TaskProps | null;
+  isLoading: boolean;
 };

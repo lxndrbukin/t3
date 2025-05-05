@@ -47,13 +47,6 @@ export default function BoardsGrid() {
           {list.map((board: BoardListItemProps) => {
             return <BoardsGridItem {...board} />;
           })}
-          <div
-            onClick={() => setShowCreateBoard(true)}
-            className="create-board"
-          >
-            <i className="fa-solid fa-plus"></i>
-            <p>Create Board</p>
-          </div>
         </div>
       </>
     );
@@ -64,7 +57,7 @@ export default function BoardsGrid() {
       {renderBoards()}
       {showCreateBoard && (
         <Popup setIsVisible={setShowCreateBoard}>
-          <CreateBoardForm />
+          <CreateBoardForm setIsVisible={setShowCreateBoard} />
         </Popup>
       )}
     </div>
