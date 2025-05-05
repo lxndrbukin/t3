@@ -134,7 +134,10 @@ export default function CreateBoardTaskForm({
           <label htmlFor="dueDate">Due</label>
           <input type="datetime-local" name="dueDate" id="dueDate" />
         </div>
-        <button type="submit">Create Task</button>
+        <div className="buttons">
+          <button type="submit">Create Task</button>
+          <button type="button">Close</button>
+        </div>
       </form>
     </div>
   );

@@ -632,8 +632,6 @@
 .create-board-task-form {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
   border: 1px solid $color-light-grey;
   background-color: $color-white;
   border-radius: 4px;
@@ -716,14 +714,40 @@
       }
     }
 
-    button {
-      margin-top: 16px;
-      padding: 8px 16px;
-      border-radius: 4px;
-      background-color: $color-blue;
-      color: $color-white;
-      border: none;
-      cursor: pointer;
+    .buttons {
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      align-self: flex-end;
+
+      button[type="submit"] {
+        background-color: $color-blue;
+        color: $color-white;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        border: 1px solid $color-blue;
+        box-sizing: border-box;
+        font-weight: bold;
+        width: 117px;
+
+        i {
+          animation: rotate 1s linear infinite;
+        }
+      }
+
+      button[type="button"] {
+        background-color: $color-white;
+        color: $color-blue;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        border: 1px solid $color-blue;
+        box-sizing: border-box;
+        font-weight: bold;
+      }
     }
   }
 }
