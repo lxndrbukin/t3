@@ -1,7 +1,7 @@
 export const defaultColumns = [
-  { id: 1, name: 'To Do', order: 1, tasks: [] },
-  { id: 2, name: 'In Progress', order: 2, tasks: [] },
-  { id: 3, name: 'Done', order: 3, tasks: [] },
+  { id: 1, name: "To Do", order: 0, tasks: [] },
+  { id: 2, name: "In Progress", order: 1, tasks: [] },
+  { id: 3, name: "Done", order: 2, tasks: [] },
 ];
 
 export const boardColumns = (customColumns: string[]) => {
@@ -10,7 +10,7 @@ export const boardColumns = (customColumns: string[]) => {
   }
   return customColumns.map((column: string, index: number) => {
     return {
-      id: index,
+      id: index + 1,
       name: column,
       order: index,
       tasks: [],

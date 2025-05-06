@@ -258,16 +258,19 @@ export const createTask = asyncHandler(async (req: Request, res: Response) => {
     (acc, col) => acc + col.tasks.length,
     0
   );
+  const totalColumnTasks = currentBoard?.columns[columnId - 1].tasks.length;
   if (!currentBoard) {
     return res.status(404).json({ message: ErrorMessage.BOARD_NOT_FOUND });
   }
-  if (!currentBoard.columns[columnId]) {
+  if (!currentBoard.columns[columnId - 1]) {
     return res.status(404).json({ message: ErrorMessage.COLUMN_NOT_FOUND });
   }
   const taskId = totalTasks ? totalTasks + 1 : 1;
+  const taskOrder = totalColumnTasks ? totalColumnTasks - 1 : 0;
   try {
-    currentBoard.columns[columnId].tasks.push({
+    currentBoard.columns[columnId - 1].tasks.push({
       id: taskId,
+      order: taskOrder,
       title,
       key: `${currentBoard.key.toUpperCase()}-${taskId}`,
       owner: { userId: (req.session as any).passport.user },
@@ -276,7 +279,16 @@ export const createTask = asyncHandler(async (req: Request, res: Response) => {
       completed: false,
     });
     await currentBoard.save();
-    const task = currentBoard.columns[columnId].tasks[taskId];
+    currentBoard = await TasksBoard.findOne({
+      owner: {
+        userId: (req.session as any).passport.user,
+      },
+      id: boardId,
+    })
+      .lean()
+      .select("-_id -__v");
+    const task = currentBoard!.columns[columnId - 1].tasks[taskOrder];
+    console.log({ ...task, columnId });
     res.status(204).json({
       ...task,
       columnId,
