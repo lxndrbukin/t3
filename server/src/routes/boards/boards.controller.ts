@@ -261,12 +261,12 @@ export const createTask = asyncHandler(async (req: Request, res: Response) => {
   if (!currentBoard) {
     return res.status(404).json({ message: ErrorMessage.BOARD_NOT_FOUND });
   }
-  if (!currentBoard.columns[columnId - 1]) {
+  if (!currentBoard.columns[columnId]) {
     return res.status(404).json({ message: ErrorMessage.COLUMN_NOT_FOUND });
   }
   const taskId = totalTasks ? totalTasks + 1 : 1;
   try {
-    currentBoard.columns[columnId - 1].tasks.push({
+    currentBoard.columns[columnId].tasks.push({
       id: taskId,
       title,
       key: `${currentBoard.key.toUpperCase()}-${taskId}`,
@@ -276,8 +276,9 @@ export const createTask = asyncHandler(async (req: Request, res: Response) => {
       completed: false,
     });
     await currentBoard.save();
+    const task = currentBoard.columns[columnId].tasks[taskId];
     res.status(204).json({
-      ...currentBoard.columns[columnId - 1].tasks[taskId - 1],
+      ...task,
       columnId,
     });
   } catch (error) {
