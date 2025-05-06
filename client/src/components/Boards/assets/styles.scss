@@ -373,8 +373,6 @@
     .board-create-column-form {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
       gap: 8px;
       width: 100%;
       background-color: $color-white;
@@ -411,15 +409,38 @@
         }
       }
 
-      button {
-        background-color: $color-blue;
-        color: $color-white;
-        padding: 8px 16px;
-        border-radius: 4px;
-        cursor: pointer;
-        border: 1px solid $color-blue;
-        width: 100%;
-        box-sizing: border-box;
+      .buttons {
+        display: flex;
+        flex-direction: row;
+        gap: 8px;
+        align-items: center;
+        justify-content: center;
+        align-self: flex-end;
+
+        button[type="submit"] {
+          background-color: $color-blue;
+          color: $color-white;
+          padding: 8px 16px;
+          border-radius: 4px;
+          cursor: pointer;
+          border: 1px solid $color-blue;
+          box-sizing: border-box;
+          font-weight: bold;
+
+          i {
+            animation: rotate 1s linear infinite;
+          }
+        }
+        button[type="button"] {
+          background-color: $color-white;
+          color: $color-blue;
+          padding: 8px 16px;
+          border-radius: 4px;
+          cursor: pointer;
+          border: 1px solid $color-blue;
+          box-sizing: border-box;
+          font-weight: bold;
+        }
       }
     }
 
@@ -428,7 +449,8 @@
       flex-direction: column;
       gap: 8px;
       width: 100%;
-      max-width: 300px;
+      min-width: 200px;
+      max-width: 250px;
       height: fit-content;
       box-sizing: border-box;
       border-radius: 4px;
