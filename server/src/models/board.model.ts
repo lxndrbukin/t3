@@ -31,6 +31,7 @@ const taskBoardSchema = new mongoose.Schema({
         {
           _id: false,
           id: Number,
+          order: Number,
           title: { type: String, required: true },
           description: { type: String, default: "" },
           key: { type: String },
