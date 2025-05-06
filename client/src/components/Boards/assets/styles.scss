@@ -233,6 +233,8 @@
           color: $color-white;
           padding: 8px 16px;
           border-radius: 4px;
+          border: 1px solid $color-blue;
+          box-sizing: border-box;
           cursor: pointer;
           font-weight: bold;
         }

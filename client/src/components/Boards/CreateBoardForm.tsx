@@ -67,7 +67,6 @@ export default function CreateBoardForm({
         })
       ).unwrap();
       setIsVisible(false);
-      console.log(board);
       navigate(`/boards/${board.id}`);
     } catch (error) {
       console.error("Failed to create board:", error);

@@ -13,15 +13,18 @@ type CreateBoardTaskFormProps = {
   boards?: BoardListItemProps[];
   currentColumn?: { id: number; name: string };
   currentBoard?: BoardProps;
+  setIsVisible: (isVisible: boolean) => void;
 };
 
 export default function CreateBoardTaskForm({
   boards,
   currentColumn,
   currentBoard,
+  setIsVisible,
 }: CreateBoardTaskFormProps) {
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.session);
+  const { isLoading } = useSelector((state: RootState) => state.boards);
 
   const [columnId, setColumnId] = useState<number>(currentColumn?.id!);
 
@@ -31,33 +34,38 @@ export default function CreateBoardTaskForm({
     }
   }, [boards?.length]);
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const taskData = {
       title: e.currentTarget.taskTitle.value,
       description: e.currentTarget.description.value,
       dueDate: new Date(e.currentTarget.dueDate.value),
     };
-    dispatch(
-      createTask({
-        userId: user?.userId!,
-        boardId: currentBoard?.id!,
-        columnId,
-        data: taskData,
-      })
-    );
+    try {
+      await dispatch(
+        createTask({
+          userId: user?.userId!,
+          boardId: currentBoard?.id!,
+          columnId,
+          data: taskData,
+        })
+      ).unwrap();
+      setIsVisible(false);
+    } catch (error) {
+      console.error("Failed to create task:", error);
+    }
   };
 
   const handleColumnSelectChange = (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    const { columns } = currentBoard!;
-    const selectedColumn = columns.find(
-      (column) => column.name === e.currentTarget.value
-    );
-    console.log(selectedColumn);
-    if (selectedColumn) {
-      setColumnId(selectedColumn.id);
+    if (currentBoard) {
+      const selectedColumn = currentBoard!.columns.find(
+        (column) => column.name === e.currentTarget.value
+      );
+      if (selectedColumn) {
+        setColumnId(selectedColumn.id);
+      }
     }
   };
 
@@ -89,6 +97,18 @@ export default function CreateBoardTaskForm({
       ));
     }
     return null;
+  };
+
+  const renderSubmitButton = () => {
+    return (
+      <button disabled={isLoading} type="submit">
+        {isLoading ? (
+          <i className="fa-solid fa-circle-notch"></i>
+        ) : (
+          "Create Task"
+        )}
+      </button>
+    );
   };
 
   return (
@@ -135,8 +155,10 @@ export default function CreateBoardTaskForm({
           <input type="datetime-local" name="dueDate" id="dueDate" />
         </div>
         <div className="buttons">
-          <button type="submit">Create Task</button>
-          <button type="button">Close</button>
+          {renderSubmitButton()}
+          <button onClick={() => setIsVisible(false)} type="button">
+            Close
+          </button>
         </div>
       </form>
     </div>

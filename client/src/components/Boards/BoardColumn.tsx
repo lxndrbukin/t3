@@ -99,6 +99,7 @@ export default function BoardColumn({ id, name, tasks }: BoardColumnProps) {
             boards={list!}
             currentColumn={{ id, name }}
             currentBoard={currentBoard!}
+            setIsVisible={setShowCreateForm}
           />
         </Popup>
       )}
