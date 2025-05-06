@@ -268,7 +268,7 @@ export const createTask = asyncHandler(async (req: Request, res: Response) => {
   const taskId = totalTasks ? totalTasks + 1 : 1;
   const taskOrder = totalColumnTasks ? totalColumnTasks - 1 : 0;
   try {
-    currentBoard.columns[columnId - 1].tasks.push({
+    const newTask = {
       id: taskId,
       order: taskOrder,
       title,
@@ -277,22 +277,11 @@ export const createTask = asyncHandler(async (req: Request, res: Response) => {
       description,
       dueDate,
       completed: false,
-    });
+    };
+
+    currentBoard.columns[columnId - 1].tasks.push(newTask);
     await currentBoard.save();
-    currentBoard = await TasksBoard.findOne({
-      owner: {
-        userId: (req.session as any).passport.user,
-      },
-      id: boardId,
-    })
-      .lean()
-      .select("-_id -__v");
-    const task = currentBoard!.columns[columnId - 1].tasks[taskOrder];
-    console.log({ ...task, columnId });
-    res.status(204).json({
-      ...task,
-      columnId,
-    });
+    res.status(201).json({ ...newTask, columnId });
   } catch (error) {
     res.status(500).json({
       message:
