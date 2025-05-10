@@ -11,7 +11,13 @@ export const getUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (req.user) {
-        res.json(req.user);
+        const { userId, name, email, joinDate } = req.user as {
+          userId: number;
+          name: string;
+          email: string;
+          joinDate: Date;
+        };
+        res.json({ userId, name, email, joinDate });
       } else {
         res.status(401).json({ message: 'Unauthorized' });
       }
@@ -37,11 +43,17 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     if (!comparePassword(password, user.password!)) {
       return res.status(401).json({ message: 'Invalid password' });
     }
-    req.login(user, (error) => {
+    const userData = {
+      userId: user.userId,
+      name: user.name,
+      email: user.email,
+      joinDate: user.joinDate,
+    };
+    req.login(userData, (error) => {
       if (error) {
         return res.status(500).json({ message: 'Internal server error' });
       }
-      res.redirect('/');
+      res.status(200).json(userData);
     });
   } catch (error) {
     res.status(500).json({
@@ -54,9 +66,26 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 export const register = asyncHandler(async (req: Request, res: Response) => {
   try {
     const { email, password, name } = req.body;
-    const user = new User({ email, password: encryptPassword(password), name });
+    const userId = (await User.countDocuments()) + 1;
+    const user = new User({
+      userId,
+      email,
+      password: encryptPassword(password),
+      name,
+    });
     await user.save();
-    res.status(201).json({ message: 'User created successfully' });
+    const userData = {
+      userId: user.userId,
+      name: user.name,
+      email: user.email,
+      joinDate: user.joinDate,
+    };
+    req.login(userData, (error) => {
+      if (error) {
+        return res.status(500).json({ message: 'Internal server error' });
+      }
+      res.status(201).json(userData);
+    });
   } catch (error) {
     res.status(500).json({
       message:
