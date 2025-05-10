@@ -1,52 +1,48 @@
-import { createBrowserRouter } from "react-router-dom";
-import App from "../App";
-import Auth from "../components/Auth/Auth";
-import Dashboard from "../components/Dashboard/Dashboard";
-import BoardsGrid from "../components/Boards/BoardsGrid";
-import Board from "../components/Boards/Board";
-import Section from "../assets/reusable/Section";
+import { createBrowserRouter } from 'react-router-dom';
+import App from '../App';
+import Auth from '../components/Auth/Auth';
+import Dashboard from '../components/Dashboard/Dashboard';
+import BoardsGrid from '../components/Boards/BoardsGrid';
+import Board from '../components/Boards/Board';
+import Section from '../assets/reusable/Section';
 
 export const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <App />,
     children: [
       {
-        path: "/auth",
-        element: (
-          <Section header="Authorization">
-            <Auth />
-          </Section>
-        ),
+        path: '/auth',
+        element: <Auth />,
       },
       {
-        path: "/dashboard",
+        path: '/dashboard',
         element: <Dashboard />,
       },
       {
-        path: "/boards",
+        path: '/boards',
         element: (
-          <Section header="Boards">
+          <Section header='Boards'>
             <BoardsGrid />
           </Section>
         ),
       },
       {
-        path: "/boards/:id",
+        path: '/boards/:id',
         element: <Board />,
       },
       {
-        path: "/members",
+        path: '/members',
         element: <h1>Members</h1>,
       },
       {
-        path: "/settings",
+        path: '/settings',
         element: <h1>Settings</h1>,
       },
       {
-        path: "/test",
+        path: '/test',
         element: (
-          <Section header="Test">
+          <Section header='Test'>
             <div>
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolore,
               unde distinctio natus nihil officiis repellat magnam, atque ipsam
