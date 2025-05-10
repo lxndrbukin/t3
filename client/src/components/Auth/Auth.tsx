@@ -16,7 +16,9 @@ export default function Auth() {
       <form>
         <input type='text' placeholder='Email' />
         <input type='password' placeholder='Password' />
-        <button type='submit'>Login</button>
+        <button type='submit'>
+          <span>Login</span>
+        </button>
       </form>
     );
   };
@@ -26,6 +28,10 @@ export default function Auth() {
       <div className='auth'>
         <h1>Login</h1>
         {renderAuthForm()}
+        <div className='auth-divider'>
+          <i className='fa-solid fa-right-left'></i>
+          <hr />
+        </div>
         <div className='auth-buttons'>
           <button className='auth-button google' onClick={handleClick}>
             <i className='fa-brands fa-google'></i>
