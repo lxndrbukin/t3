@@ -1,6 +1,15 @@
-import mongoose from 'mongoose';
+import mongoose, { Document, Model } from 'mongoose';
 
-const userSchema = new mongoose.Schema({
+interface IUser {
+  userId: number;
+  googleId?: string;
+  name: string;
+  email: string;
+  password?: string;
+  joinDate: Date;
+}
+
+const userSchema = new mongoose.Schema<IUser>({
   userId: {
     type: Number,
     required: true,
@@ -8,6 +17,8 @@ const userSchema = new mongoose.Schema({
   },
   googleId: {
     type: String,
+    sparse: true,
+    index: true,
   },
   name: {
     type: String,
@@ -27,6 +38,8 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-const User = mongoose.model('User', userSchema);
+userSchema.index({ googleId: 1 }, { unique: true, sparse: true });
+
+const User = mongoose.model<IUser>('User', userSchema);
 
 export default User;
