@@ -1,4 +1,4 @@
-@import "../../../assets/variables.scss";
+@import '../../../assets/variables.scss';
 
 .boards-grid-container {
   display: flex;
@@ -313,7 +313,7 @@
       justify-content: center;
       align-self: flex-end;
 
-      button[type="submit"] {
+      button[type='submit'] {
         background-color: $color-blue;
         color: $color-white;
         padding: 8px 16px;
@@ -329,7 +329,7 @@
         }
       }
 
-      button[type="button"] {
+      button[type='button'] {
         background-color: $color-white;
         color: $color-blue;
         padding: 8px 16px;
@@ -417,7 +417,7 @@
         justify-content: center;
         align-self: flex-end;
 
-        button[type="submit"] {
+        button[type='submit'] {
           background-color: $color-blue;
           color: $color-white;
           padding: 8px 16px;
@@ -431,7 +431,7 @@
             animation: rotate 1s linear infinite;
           }
         }
-        button[type="button"] {
+        button[type='button'] {
           background-color: $color-white;
           color: $color-blue;
           padding: 8px 16px;
@@ -601,7 +601,7 @@
     .board-task-info-left {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 32px;
       width: 65%;
       height: 100%;
 
@@ -610,15 +610,84 @@
         font-size: 24px;
         font-weight: bold;
       }
+
+      .board-task-info-description {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+
+        h5 {
+          margin: 0;
+          font-size: 16px;
+          font-weight: bold;
+        }
+
+        textarea {
+          margin-bottom: 8px;
+          padding: 8px;
+          border: none;
+          outline: none;
+          width: 100%;
+          box-sizing: border-box;
+          resize: none;
+        }
+
+        p {
+          margin: 0;
+          font-size: 16px;
+        }
+      }
+
+      .board-task-info-activity {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+
+        h5 {
+          margin: 0;
+          font-size: 16px;
+          font-weight: bold;
+        }
+
+        .board-task-info-activity-headers {
+          display: flex;
+          flex-direction: row;
+          gap: 8px;
+          width: 100%;
+
+          .board-task-info-activity-header-item {
+            display: flex;
+            flex-direction: row;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            box-sizing: border-box;
+            border-bottom: 1px solid $color-light-grey;
+            border-radius: 4px;
+            cursor: pointer;
+
+            &:hover {
+              background-color: $color-light-grey;
+            }
+          }
+        }
+      }
     }
 
     .board-task-info-right {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-
+      gap: 16px;
       width: 35%;
       height: 100%;
+
+      .board-task-info-right-select {
+        width: fit-content;
+        min-width: 75px;
+      }
 
       .board-task-info-right-item {
         display: flex;
@@ -746,7 +815,7 @@
       justify-content: center;
       align-self: flex-end;
 
-      button[type="submit"] {
+      button[type='submit'] {
         background-color: $color-blue;
         color: $color-white;
         padding: 8px 16px;
@@ -762,7 +831,7 @@
         }
       }
 
-      button[type="button"] {
+      button[type='button'] {
         background-color: $color-white;
         color: $color-blue;
         padding: 8px 16px;
