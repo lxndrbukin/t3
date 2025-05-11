@@ -1,4 +1,4 @@
-import mongoose, { Document, Model } from 'mongoose';
+import mongoose from 'mongoose';
 
 interface IUser {
   userId: number;
@@ -17,8 +17,6 @@ const userSchema = new mongoose.Schema<IUser>({
   },
   googleId: {
     type: String,
-    sparse: true,
-    index: true,
   },
   name: {
     type: String,
