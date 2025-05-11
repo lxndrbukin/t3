@@ -1,13 +1,21 @@
 import './assets/styles.scss';
-import { FormEvent } from 'react';
-import { useLocation } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { AppDispatch, googleLogin, login, register } from '../../store';
+import { FormEvent, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  AppDispatch,
+  RootState,
+  getCurrentSession,
+  googleLogin,
+  login,
+  register,
+} from '../../store';
 
 export default function Auth() {
   const dispatch = useDispatch<AppDispatch>();
-  const location = useLocation();
-  const { pathname } = location;
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const { isLoggedIn } = useSelector((state: RootState) => state.session);
 
   const handleClick = (event: FormEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -41,6 +49,16 @@ export default function Auth() {
       </form>
     );
   };
+
+  useEffect(() => {
+    dispatch(getCurrentSession());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if ((pathname === '/login' || pathname === '/register') && isLoggedIn) {
+      navigate('/', { replace: true });
+    }
+  }, [pathname, isLoggedIn, navigate]);
 
   return (
     <div className='auth-container'>

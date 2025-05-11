@@ -1,7 +1,7 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { SessionProps } from './types';
 import { getCurrentSession } from '../thunks/currentSession';
-import { googleLogin } from '../thunks/auth';
+import { login, logout, register } from '../thunks/auth';
 
 const initialState: SessionProps = {
   isLoggedIn: false,
@@ -11,16 +11,7 @@ const initialState: SessionProps = {
 const sessionSlice = createSlice({
   name: 'session',
   initialState,
-  reducers: {
-    login: (state, action) => {
-      state.isLoggedIn = true;
-      state.user = action.payload;
-    },
-    logout: (state) => {
-      state.isLoggedIn = false;
-      state.user = undefined;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder.addCase(
       getCurrentSession.fulfilled,
@@ -29,8 +20,19 @@ const sessionSlice = createSlice({
         state.user = action.payload;
       }
     );
+    builder.addCase(login.fulfilled, (state: SessionProps, action) => {
+      state.isLoggedIn = true;
+      state.user = action.payload;
+    });
+    builder.addCase(logout.fulfilled, (state: SessionProps) => {
+      state.isLoggedIn = false;
+      state.user = undefined;
+    });
+    builder.addCase(register.fulfilled, (state: SessionProps, action) => {
+      state.isLoggedIn = true;
+      state.user = action.payload;
+    });
   },
 });
 
-export const { login, logout } = sessionSlice.actions;
 export default sessionSlice.reducer;
