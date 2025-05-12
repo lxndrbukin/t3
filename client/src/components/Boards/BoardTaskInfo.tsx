@@ -1,16 +1,10 @@
 import { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch, BoardColumnProps } from '../../store';
-import { getTask } from '../../store/thunks/boards';
+import { getTask, updateTask } from '../../store/thunks/boards';
 import { formatDate } from './helpers';
-
-type BoardTaskData = {
-  data: {
-    taskId: number;
-    columnId: number;
-    boardId: number;
-  };
-};
+import { BoardTaskData } from './types';
+import { activityHeaders } from './assets';
 
 export default function BoardTaskInfo({
   data: { taskId, columnId, boardId },
@@ -22,9 +16,20 @@ export default function BoardTaskInfo({
   );
 
   const [isUpdateDescription, setIsUpdateDescription] = useState(false);
+  const [taskData, setTaskData] = useState<{
+    title?: string | undefined;
+    description?: string | undefined;
+    dueDate?: Date | undefined;
+  }>({
+    title: undefined,
+    description: undefined,
+    dueDate: undefined,
+  });
 
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const [editableDescText, setEditableDescText] = useState('');
+  const [activity, setActivity] = useState('Comments');
+  const [statusId, setStatusId] = useState(columnId);
 
   useEffect(() => {
     dispatch(
@@ -64,23 +69,50 @@ export default function BoardTaskInfo({
     setIsUpdateDescription(true);
   };
 
+  const handleDescChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setEditableDescText(e.target.value);
+    setTaskData({
+      ...taskData,
+      description: e.target.value,
+    });
+  };
+
+  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setStatusId(Number(e.target.value));
+    dispatch(
+      updateTask({
+        userId: user!.userId,
+        boardId: currentBoard!.id,
+        columnId: statusId,
+        taskId: currentTask!.id,
+        data: {
+          ...taskData,
+        },
+      })
+    );
+  };
+
   const renderStatusSelect = () => {
     return currentBoard?.columns.map((column: BoardColumnProps) => {
       return (
-        <option key={column.id} value={column.id}>
+        <option
+          onClick={() => setStatusId(column.id)}
+          key={column.id}
+          value={column.id}
+        >
           {column.name}
         </option>
       );
     });
   };
 
-  const renderUpdateDescription = () => {
+  const renderUpdateDesc = () => {
     return (
       <textarea
         ref={descriptionRef}
         placeholder='Add a description...'
         value={editableDescText}
-        onChange={(e) => setEditableDescText(e.target.value)}
+        onChange={handleDescChange}
       />
     );
   };
@@ -103,6 +135,36 @@ export default function BoardTaskInfo({
     );
   };
 
+  const renderActivityHeaders = () => {
+    return activityHeaders.map((header: string) => {
+      return (
+        <div
+          onClick={() => setActivity(header)}
+          key={header}
+          className={`board-task-info-activity-header-item ${
+            activity === header ? 'active' : ''
+          }`}
+        >
+          <span>{header}</span>
+        </div>
+      );
+    });
+  };
+
+  const renderActivity = () => {
+    if (activity === 'Comments') {
+      return (
+        <textarea
+          ref={descriptionRef}
+          placeholder='Add a comment...'
+          value={editableDescText}
+          onChange={handleDescChange}
+        />
+      );
+    }
+    return null;
+  };
+
   return (
     <div className='board-task-info-popup'>
       <div className='board-task-info-header'>
@@ -118,26 +180,20 @@ export default function BoardTaskInfo({
           <h1 className='board-task-info-title'>{currentTask?.title}</h1>
           <div className='board-task-info-description'>
             <h5>Description:</h5>
-            {isUpdateDescription
-              ? renderUpdateDescription()
-              : renderDescription()}
+            {isUpdateDescription ? renderUpdateDesc() : renderDescription()}
           </div>
           <div className='board-task-info-activity'>
             <h5>Activity:</h5>
             <div className='board-task-info-activity-headers'>
-              <div className='board-task-info-activity-header-item'>
-                <span>Comments</span>
-              </div>
-              <div className='board-task-info-activity-header-item'>
-                <span>History</span>
-              </div>
+              {renderActivityHeaders()}
             </div>
+            {renderActivity()}
           </div>
         </div>
         <div className='board-task-info-right'>
           <select
             className='board-task-info-right-select'
-            onChange={(e) => console.log(e.target.value)}
+            onChange={handleStatusChange}
           >
             {renderStatusSelect()}
           </select>
