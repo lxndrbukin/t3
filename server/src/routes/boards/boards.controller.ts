@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction } from "express";
-import { TasksBoard } from "../../models/board.model";
-import User from "../../models/user.model";
+import { Request, Response, NextFunction } from 'express';
+import { TasksBoard } from '../../models/board.model';
+import User from '../../models/user.model';
 
-import { ErrorMessage } from "./types";
-import { boardColumns } from "./assets";
+import { ErrorMessage } from './types';
+import { boardColumns } from './assets';
 
 const asyncHandler =
   (fn: any) => (req: Request, res: Response, next: NextFunction) => {
@@ -71,7 +71,7 @@ export const getBoard = asyncHandler(async (req: Request, res: Response) => {
       id: boardId,
     })
       .lean()
-      .select("-_id -__v");
+      .select('-_id -__v');
     if (!tasksBoard) {
       return res
         .status(404)
@@ -163,7 +163,7 @@ export const createColumn = asyncHandler(
       }).lean();
       const columnOrder = currentBoard!.columns.length;
       if (!currentBoard) {
-        return res.status(404).json({ message: "Board not found" });
+        return res.status(404).json({ message: 'Board not found' });
       }
       const updatedBoard = await TasksBoard.findOneAndUpdate(
         {
@@ -188,7 +188,7 @@ export const createColumn = asyncHandler(
       if (!updatedBoard) {
         return res
           .status(404)
-          .json({ message: "Board not found after update" });
+          .json({ message: 'Board not found after update' });
       }
 
       res
@@ -197,7 +197,7 @@ export const createColumn = asyncHandler(
     } catch (error) {
       res.status(500).json({
         message:
-          error instanceof Error ? error.message : "Unknown error occurred",
+          error instanceof Error ? error.message : 'Unknown error occurred',
       });
     }
   }
@@ -333,14 +333,14 @@ export const getTask = asyncHandler(async (req: Request, res: Response) => {
           userId: task.owner.userId,
         })
           .lean()
-          .select("-password -_id -__v -googleId -joinDate")
+          .select('-password -_id -__v -googleId -joinDate')
       : null;
     const taskAssignee = task.assignedTo?.userId
       ? await User.findOne({
           userId: task.assignedTo.userId,
         })
           .lean()
-          .select("-password -_id -__v -googleId -joinDate")
+          .select('-password -_id -__v -googleId -joinDate')
       : null;
     const taskInfo = {
       ...task,
@@ -348,6 +348,44 @@ export const getTask = asyncHandler(async (req: Request, res: Response) => {
       assignedTo: taskAssignee || null,
     };
     res.status(200).json(taskInfo);
+  } catch (error) {
+    res.status(500).json({
+      message:
+        error instanceof Error ? error.message : ErrorMessage.UNKNOWN_ERROR,
+    });
+  }
+});
+
+export const updateTask = asyncHandler(async (req: Request, res: Response) => {
+  const { boardId, columnId, taskId } = req.params;
+  try {
+    const currentBoard = await TasksBoard.findOne({
+      owner: {
+        userId: (req.session as any).passport.user,
+      },
+      id: boardId,
+    });
+    if (!currentBoard) {
+      return res.status(404).json({ message: ErrorMessage.BOARD_NOT_FOUND });
+    }
+    const targetColumn = currentBoard.columns.find(
+      (col: any) => col.id === Number(columnId)
+    );
+    if (!targetColumn) {
+      return res.status(404).json({ message: ErrorMessage.COLUMN_NOT_FOUND });
+    }
+    const targetTaskIndex = targetColumn.tasks.findIndex(
+      (task: any) => task.id === Number(taskId)
+    );
+    if (targetTaskIndex === -1) {
+      return res.status(404).json({ message: ErrorMessage.TASK_NOT_FOUND });
+    }
+    targetColumn.tasks[targetTaskIndex] = {
+      ...targetColumn.tasks[targetTaskIndex],
+      ...req.body,
+    };
+    await currentBoard.save();
+    res.status(204).json();
   } catch (error) {
     res.status(500).json({
       message:
