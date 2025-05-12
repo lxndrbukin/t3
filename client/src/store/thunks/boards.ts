@@ -1,9 +1,9 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
-import { BoardData } from "./types";
-import axios from "axios";
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { BoardData } from './types';
+import axios from 'axios';
 
 export const getBoardsList = createAsyncThunk(
-  "boards/getBoardsList",
+  'boards/getBoardsList',
   async (userId: number) => {
     const response = await axios.get(`/v1/${userId}/boards`);
     return response.data;
@@ -11,7 +11,7 @@ export const getBoardsList = createAsyncThunk(
 );
 
 export const createBoard = createAsyncThunk(
-  "boards/createBoard",
+  'boards/createBoard',
   async ({ userId, data }: { userId: number; data: BoardData }) => {
     const response = await axios.post(`/v1/${userId}/boards`, data);
     return response.data;
@@ -19,7 +19,7 @@ export const createBoard = createAsyncThunk(
 );
 
 export const getBoard = createAsyncThunk(
-  "boards/getBoard",
+  'boards/getBoard',
   async ({ userId, boardId }: { userId: number; boardId: number }) => {
     const response = await axios.get(`/v1/${userId}/boards/${boardId}`);
     return response.data;
@@ -27,7 +27,7 @@ export const getBoard = createAsyncThunk(
 );
 
 export const createColumn = createAsyncThunk(
-  "boards/createColumn",
+  'boards/createColumn',
   async ({
     userId,
     boardId,
@@ -46,7 +46,7 @@ export const createColumn = createAsyncThunk(
 );
 
 export const deleteColumn = createAsyncThunk(
-  "boards/deleteColumn",
+  'boards/deleteColumn',
   async ({
     userId,
     boardId,
@@ -64,7 +64,7 @@ export const deleteColumn = createAsyncThunk(
 );
 
 export const getTask = createAsyncThunk(
-  "boards/getTask",
+  'boards/getTask',
   async ({
     userId,
     boardId,
@@ -84,7 +84,7 @@ export const getTask = createAsyncThunk(
 );
 
 export const createTask = createAsyncThunk(
-  "boards/createTask",
+  'boards/createTask',
   async ({
     userId,
     boardId,
@@ -98,6 +98,29 @@ export const createTask = createAsyncThunk(
   }) => {
     const response = await axios.post(
       `/v1/${userId}/boards/${boardId}/columns/${columnId}/tasks`,
+      data
+    );
+    return response.data;
+  }
+);
+
+export const updateTask = createAsyncThunk(
+  'boards/updateTask',
+  async ({
+    userId,
+    boardId,
+    columnId,
+    taskId,
+    data,
+  }: {
+    userId: number;
+    boardId: number;
+    columnId: number;
+    taskId: number;
+    data: { title?: string; description?: string; dueDate?: Date };
+  }) => {
+    const response = await axios.put(
+      `/v1/${userId}/boards/${boardId}/columns/${columnId}/tasks/${taskId}`,
       data
     );
     return response.data;
