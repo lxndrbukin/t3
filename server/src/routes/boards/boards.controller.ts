@@ -359,33 +359,48 @@ export const getTask = asyncHandler(async (req: Request, res: Response) => {
 export const updateTask = asyncHandler(async (req: Request, res: Response) => {
   const { boardId, columnId, taskId } = req.params;
   try {
-    const currentBoard = await TasksBoard.findOne({
-      owner: {
-        userId: (req.session as any).passport.user,
+    const currentBoard = await TasksBoard.findOneAndUpdate(
+      {
+        owner: {
+          userId: (req.session as any).passport.user,
+        },
+        id: boardId,
       },
-      id: boardId,
-    });
+      {
+        $set: {
+          [`columns.${Number(columnId) - 1}.tasks.${Number(taskId) - 1}`]: {
+            ...req.body,
+          },
+        },
+      },
+      {
+        new: true,
+        lean: true,
+      }
+    );
     if (!currentBoard) {
       return res.status(404).json({ message: ErrorMessage.BOARD_NOT_FOUND });
     }
-    const targetColumn = currentBoard.columns.find(
-      (col: any) => col.id === Number(columnId)
-    );
-    if (!targetColumn) {
-      return res.status(404).json({ message: ErrorMessage.COLUMN_NOT_FOUND });
-    }
-    const targetTaskIndex = targetColumn.tasks.findIndex(
-      (task: any) => task.id === Number(taskId)
-    );
-    if (targetTaskIndex === -1) {
-      return res.status(404).json({ message: ErrorMessage.TASK_NOT_FOUND });
-    }
-    targetColumn.tasks[targetTaskIndex] = {
-      ...targetColumn.tasks[targetTaskIndex],
-      ...req.body,
+    const filteredBoard = {
+      ...currentBoard,
+      columns: currentBoard.columns.map((col: any) => ({
+        id: col.id,
+        name: col.name,
+        order: col.order,
+        tasks: col.tasks.map((task: any) => ({
+          id: task.id,
+          title: task.title,
+          key: task.key,
+          owner: task.owner,
+          assignedTo: task.assignedTo,
+          description: task.description,
+          completed: task.completed,
+          createdAt: task.createdAt,
+          dueDate: task.dueDate,
+        })),
+      })),
     };
-    await currentBoard.save();
-    res.status(204).json();
+    res.status(200).json(filteredBoard);
   } catch (error) {
     res.status(500).json({
       message:
