@@ -420,7 +420,7 @@ export const updateTask = asyncHandler(async (req: Request, res: Response) => {
       owner: taskOwner || null,
       assignedTo: taskAssignee || null,
     };
-    res.status(200).json(taskInfo);
+    res.status(200).json({ columnId: Number(columnId), ...taskInfo });
   } catch (error) {
     res.status(500).json({
       message:
