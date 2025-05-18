@@ -132,6 +132,7 @@ const boardsSlice = createSlice({
           );
           if (targetTaskIndex !== -1) {
             targetColumn.tasks[targetTaskIndex] = action.payload;
+            state.currentTask = action.payload;
           } else {
             console.error(
               `[updateTask.fulfilled] Task ${action.payload.id} not found in column ${action.payload.columnId}`
