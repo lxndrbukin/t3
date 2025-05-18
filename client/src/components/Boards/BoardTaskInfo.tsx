@@ -28,7 +28,8 @@ export default function BoardTaskInfo({
     dueDate: undefined,
   });
 
-  const descriptionRef = useRef<HTMLTextAreaElement>(null);
+  const descriptionRef = useRef<HTMLDivElement>(null);
+  const descriptionInputRef = useRef<HTMLTextAreaElement>(null);
   const [activity, setActivity] = useState('Comments');
   const [statusId, setStatusId] = useState(columnId);
 
@@ -72,40 +73,51 @@ export default function BoardTaskInfo({
     }
   }, [currentTask?.description]);
 
-  const handleOutsideClick = useCallback(
-    (event: MouseEvent) => {
+  const handleInsideClick = useCallback(
+    (e: MouseEvent) => {
       if (
         descriptionRef.current &&
-        event.target &&
-        !descriptionRef.current.contains(event.target as Node) &&
-        taskData.description !== currentTask?.description &&
-        taskData.description !== undefined &&
-        taskData.description !== ''
+        descriptionRef.current.contains(descriptionInputRef.current)
       ) {
-        updateTaskData({
-          description: taskData.description,
-        });
+        descriptionInputRef.current?.focus();
+        e.stopPropagation();
       }
-      setIsUpdateDescription(false);
     },
-    [
-      descriptionRef,
-      updateTaskData,
-      taskData.description,
-      currentTask?.description,
-    ]
+    [descriptionRef, descriptionInputRef]
+  );
+
+  const handleOutsideClick = useCallback(
+    (e: MouseEvent) => {
+      if (
+        descriptionRef.current &&
+        descriptionInputRef.current &&
+        e.target instanceof Node &&
+        !descriptionRef.current.contains(e.target) &&
+        !descriptionInputRef.current.contains(e.target)
+      ) {
+        if (
+          taskData.description !== currentTask?.description &&
+          taskData.description !== undefined &&
+          taskData.description !== ''
+        ) {
+          updateTaskData({
+            description: taskData.description,
+          });
+        }
+        setIsUpdateDescription(false);
+      }
+    },
+    [updateTaskData, taskData.description, currentTask?.description]
   );
 
   useEffect(() => {
+    document.addEventListener('mousedown', handleInsideClick);
     document.addEventListener('mousedown', handleOutsideClick);
-    return () => document.removeEventListener('mousedown', handleOutsideClick);
-  }, [handleOutsideClick]);
-
-  useEffect(() => {
-    if (isUpdateDescription && descriptionRef.current) {
-      descriptionRef.current.focus();
-    }
-  }, [isUpdateDescription]);
+    return () => {
+      document.removeEventListener('mousedown', handleInsideClick);
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [handleInsideClick, handleOutsideClick]);
 
   const handleUpdateDescription = useCallback(() => {
     setIsUpdateDescription(true);
@@ -140,30 +152,22 @@ export default function BoardTaskInfo({
 
   const descriptionInput = useMemo(
     () => (
-      <textarea
-        ref={descriptionRef}
-        placeholder='Add a description...'
-        value={taskData.description || ''}
-        onChange={handleDescChange}
-      />
+      <div ref={descriptionRef}>
+        <textarea
+          ref={descriptionInputRef}
+          placeholder='Add a description...'
+          value={taskData.description || ''}
+          onChange={handleDescChange}
+        />
+      </div>
     ),
     [taskData.description, handleDescChange]
   );
 
   const descriptionDisplay = useMemo(() => {
-    if (!currentTask?.description) {
-      return (
-        <p
-          onClick={handleUpdateDescription}
-          style={{ cursor: 'pointer', fontStyle: 'italic', color: 'grey' }}
-        >
-          Add a description...
-        </p>
-      );
-    }
     return (
       <p onClick={handleUpdateDescription} style={{ cursor: 'pointer' }}>
-        {currentTask.description}
+        {currentTask?.description ?? 'Add a description...'}
       </p>
     );
   }, [currentTask?.description, handleUpdateDescription]);
@@ -185,11 +189,7 @@ export default function BoardTaskInfo({
   const activityContent = useMemo(() => {
     if (activity === 'Comments') {
       return (
-        <textarea
-          ref={descriptionRef}
-          placeholder='Add a comment...'
-          onChange={handleDescChange}
-        />
+        <textarea placeholder='Add a comment...' onChange={handleDescChange} />
       );
     }
     return null;
@@ -200,7 +200,7 @@ export default function BoardTaskInfo({
       <div className='board-task-info-header'>
         <div className='board-task-info-key'>
           <span>
-            {currentBoard?.boardName} / <i className='fa-solid fa-square'></i>{' '}
+            <i className='fa-solid fa-square'></i> {currentBoard?.boardName} /{' '}
             {currentTask?.key}
           </span>
         </div>
