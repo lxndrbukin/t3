@@ -359,7 +359,16 @@ export const getTask = asyncHandler(async (req: Request, res: Response) => {
 export const updateTask = asyncHandler(async (req: Request, res: Response) => {
   const { boardId, columnId, taskId } = req.params;
   try {
-    const currentBoard = await TasksBoard.findOneAndUpdate(
+    let currentBoard = await TasksBoard.findOne({
+      owner: {
+        userId: (req.session as any).passport.user,
+      },
+      id: boardId,
+    }).lean();
+    if (!currentBoard) {
+      return res.status(404).json({ message: ErrorMessage.BOARD_NOT_FOUND });
+    }
+    await TasksBoard.findOneAndUpdate(
       {
         owner: {
           userId: (req.session as any).passport.user,
@@ -369,6 +378,9 @@ export const updateTask = asyncHandler(async (req: Request, res: Response) => {
       {
         $set: {
           [`columns.${Number(columnId) - 1}.tasks.${Number(taskId) - 1}`]: {
+            ...currentBoard.columns[Number(columnId) - 1].tasks[
+              Number(taskId) - 1
+            ],
             ...req.body,
           },
         },
@@ -378,29 +390,37 @@ export const updateTask = asyncHandler(async (req: Request, res: Response) => {
         lean: true,
       }
     );
+    currentBoard = await TasksBoard.findOne({
+      owner: {
+        userId: (req.session as any).passport.user,
+      },
+      id: boardId,
+    }).lean();
     if (!currentBoard) {
       return res.status(404).json({ message: ErrorMessage.BOARD_NOT_FOUND });
     }
-    const filteredBoard = {
-      ...currentBoard,
-      columns: currentBoard.columns.map((col: any) => ({
-        id: col.id,
-        name: col.name,
-        order: col.order,
-        tasks: col.tasks.map((task: any) => ({
-          id: task.id,
-          title: task.title,
-          key: task.key,
-          owner: task.owner,
-          assignedTo: task.assignedTo,
-          description: task.description,
-          completed: task.completed,
-          createdAt: task.createdAt,
-          dueDate: task.dueDate,
-        })),
-      })),
+    const updatedTask =
+      currentBoard.columns[Number(columnId) - 1].tasks[Number(taskId) - 1];
+    const taskOwner = updatedTask.owner?.userId
+      ? await User.findOne({
+          userId: updatedTask.owner.userId,
+        })
+          .lean()
+          .select('-password -_id -__v -googleId -joinDate')
+      : null;
+    const taskAssignee = updatedTask.assignedTo?.userId
+      ? await User.findOne({
+          userId: updatedTask.assignedTo.userId,
+        })
+          .lean()
+          .select('-password -_id -__v -googleId -joinDate')
+      : null;
+    const taskInfo = {
+      ...updatedTask,
+      owner: taskOwner || null,
+      assignedTo: taskAssignee || null,
     };
-    res.status(200).json(filteredBoard);
+    res.status(200).json(taskInfo);
   } catch (error) {
     res.status(500).json({
       message:
